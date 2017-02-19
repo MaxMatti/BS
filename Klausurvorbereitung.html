@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<title>Betriebssysteme und Sicherheit Prüfungsvorbereitung</title>
+
+<!-- MARKDOWN ......................... -->
+<xmp theme="superhero" style="display:none;">
+# Sicherheit
+
+##Safety und Security:
+###Safety:	
+* Schutz vor Schäden durch Fehlfunktionen von IT-Systemen
+* technisches Versagen: Alterung, Stromausfall
+* Menschliches Versagen: Dummheit, Fahrlässigkeit, mangelnde Ausbildung
+* höhere Gewalt: Feuer, Blitzschlag, Erdbeben
+
+→ Schutz vor einem IT-System, bedroht durch Fehler, Ausfälle
+
+
+###Security: 
+* Schutz vor Schäden durch zielgerichtete Angriffe auf IT-Systeme
+* Wirtschaftsspionage, Betrug, Erpressung, Vandalismus
+
+→ Schutz des IT-Systems, bedroht durch strategische Angreifer
+
+
+##Bedrohung
+* Abstrakt: mögliche Ereignisse/Aktionen, die zu einer Verletzung eines oder mehrerer Sicherheitsziele führt
+* Instanziierung einer Bedrohung ist ein **Angriff**
+
+###Ziele der IT-Sicherheit → *CIA*
+* Vertraulichkeit (**C**onfidentiality)
+   - Übertragene und gespeicherte Daten dürfen nur legitimierten Empfängern zugänglich sein
+   - Vertraulichkeit der Identität wird als Anonymität bezeichnet
+
+   
+* Integrität (**I**ntegrity)
+  - Veränderungen an Daten müssen erkannt werden
+  - (Identifikation des Absenders)
+
+  
+* Verfügbarkeit (**A**vailability)
+  - Informationen und Dienste sollen berechtigten Nutzern in angemessener Frist zugänglich sein
+
+  
+Ebenfalls:
+
+* Zurechenbarkeit (Accountability)
+  - verantwortliche Partei für eine Operation soll identifizierbar sein
+
+  
+* Kontrollierter Zugriff (Controlled Access)
+  - nur autorisierte Parteien sollen in der Lage sein, auf Dienste oder Informationen zuzugreifen
+
+
+### Bedrohungen
+* Maskerade
+
+* Informationsverlust
+
+* Autorisierungsverletzung
+
+* Zerstörung/Modifikation von Information
+
+* Fälschung von Information
+
+* Abstreiten von Ereignissen
+
+* Sabotage
+
+
+### Sicherheitsdienste
+* Authentifizierung
+
+* Integritätsschutz
+
+* Vertraulichkeitsschutz
+
+* Zugangskontrolle
+
+* Nicht-Abstreitbarkeit
+
+
+### Sicherheitsanforderungen
+
+* Methodische Identifikation und Spezifikation der Sicherheitseigenschaften von IT-Systemen
+
+#### Bedrohungsanalyse:
+* Identifikation der möglichen Angriffsziele / Angreifer / Angriffsmethoden und -techniken
+
+→ Erstellung eines Bedrohungskatalogs mit Inhalt:
+
+* Identifikation der Angriffsziele
+* Identifikation potentieller Angreifer
+* Angriffsmethoden und -techniken
+* Schadenspotential
+
+__Angriffsziele:__
+
+* Informationsgewinn (Spionage, Kontrolle kritischen Wissens)
+* Modifikation von Daten (Sabotage)
+
+__Angreifer:__
+
+* professionelle Organisationen
+* ehemalige und aktive Mitarbeiter
+* politische Gegner
+
+__Angriffsmethoden und-techniken:__
+
+* Ausnutzung technischer und menschlicher Schwachstellen
+
+__Schadenspotential:__
+
+* Verlust der Kontrolle über kritisches Wissen (Risikotechnologien)
+* wirtschaftliche Schäden (Vertragsstrafen, Produktkopien)
+* Reputationsschäden
+
+------------------------------------------------------------------------------------------------------
+
+# Threads
+
+**"fair"**: 
+
+* jeder Thread erhält “angemessenen” Anteil CPU-Zeit
+* kein Thread darf CPU für sich allein beanspruchen
+* Wohlverhalten von Threads darf bei der Implementierung von Threads keine Voraussetzung sein 
+
+#### Definition Thread
+
+* sequentielles Programm
+* parallel arbeitend zu anderen Threads
+* von einem Betriebssystem zur Verfügung gestellt
+
+#### Zustände
+
+* Aktiv
+  - Thread wird gerade auf der CPU ausgeführt
+* Blockiert
+  - Thread wartet auf ein Ereignis um weiterarbeiten zu können
+* Bereit
+  - nicht aktiv aber auch nicht blockiert
+  
+##### Mögliche Übergänge
+
+* Aktiv --> Blockiert
+  - Fehlende Betriebsmittel o.Ä.
+  - Warten auf Botschaft oder Zwischenergebnis
+* Aktiv --> Bereit
+  - z.B. Rechenzeit zu Ende
+* Blockiert --> Bereit
+  - Betriebsmittel stehen zur Verfügung
+* Bereit --> Aktiv
+  - Es wird zu dem Thread gewechselt
+  
+  
+#### Betriebsmittel eines Threads
+
+* Kern-Stack
+* CPU State
+* Thread-Zustand
+* Verweis auf Adressraum
+* Scheduling-Attribute
+* --> TCB (Thread Control Block)
+
+#### Ablauf von switch_to(Ziel-Thread)
+
+```xsl
+store_CPU_State();		//in den TCP der im Stack liegt
+
+TCBTAB[Aktueller-Thread].StackPointer = StackPointer;		//Speichern der Daten in TCB Tabelle
+
+Aktueller-Thread = Ziel-Thread;		// Thread switch
+
+SP = TCBTAB[Aktueller-Thread].StackPointer;
+
+load_CPU_State();		// laden aus dem TCP aus dem Stack
+```
+
+
+## Kritischer Abschnitt
+
+Den Programmteil, in dem auf gemeinsamen Speicher gearbeitet wird, nennt man Kritischer Abschnitt (KA). Wettläufe um den Speicher nennt man Race Condition
+
+**Anforderungen**:
+
+* keine zwei Threadsdürfen sich zur selben Zeit im selben KA befinden.
+   * -> Wechselseitiger Ausschluss 		(**SICHERHEIT**)
+* Jeder Thread, der einen kritischen Abschnitt betreten möchte, muss ihn auch irgendwann betreten können.	(**LEBENDIGKEIT**)
+* Es dürfen keine Annahmen über die Anzahl, Reihenfolge oder relativen Geschwindigkeiten der Threads gemacht werden
+
+### Lösungsansätze
+
+#### Implementierung mittels Interruptsperrre (Unterbrechungssperre) //FOLIE 70
+
+**Vorteil**:
+
+* einfach
+* effizient
+
+**Nachteil**:
+
+* Nicht im User-Mode
+* manche KA sind zu lang
+* funktioniert nicht auf Mulitprozessor-Systemen
+
+**Konsequenz**:
+
+* wird nur in BS für 1 CPU Rechner genutzt und da nur im BS-Kern.		
+
+#### Implementierung mit HW Unterstützung // FOLIE 73 
+
+**Vorteil**:
+
+* funktioniert im MP-Fall
+* es können mehrere KA so implementiert werden
+
+**Nachteil**:
+
+* busy waiting
+* hohe Busbelastung
+* ein Thread kann verhungern
+* nicht für Threads auf demselben Prozessor
+
+**Konsequenz**:
+
+* geeignet nur für Kurze KA bei kleiner CPU-Anzahl
+
+#### Lösung nach Peterson //FOLIE 79-82
+
+**Vorteile**:
+
+* funktioniert im MP Fall
+* es können mehrere KA so implementiert werden
+* keine HW Unterstützung nötig
+
+**Nachteile**:
+
+* busy waiting
+* hohe Busbelastung
+* (vielleicht nur für 2 Threads?!)
+
+#### Semaphore
+
+```
+class SemaphoreT {   
+	
+	public:  
+	
+	SemaphoreT(int howMany);  
+	//Konstruktor  
+	
+	void down();  
+	//P: passeren = betreten  
+	
+	void up();  
+	//V: verlaten = verlassen  
+} 
+```
+
+> A mutex is used for mutual exclusion. A region of code that begins with a call to acquire a mutex, and ends with a call to release the same mutex, can only have one thread in the code at a time.
+
+> A semaphore is used for flow control, to restrict the number of threads executing a block of code that begins with a call to acquire the semaphore, and ends with a call to release the semaphore.
+
+oder
+
+> A mutex object only allows one thread into a controlled section, forcing other threads which attempt to gain access to that section to wait until the first thread has exited from that section.
+
+> A semaphore restricts the number of simultaneous users of a shared resource up to a maximum number. Threads can request access to the resource (decrementing the semaphore), and can signal that they have finished using the resource (incrementing the semaphore).
+
+* z = Counter Zählvariable
+* q = Warteschlange
+
+Initialisierung:
+
+* z := Anfangswert (max. Anzahl von Threads, die KA gleichzeitig betreten dürfen)
+* q := leer
+
+
+* P: prüft ob z &le; 0 --> wenn ja, blockieren --> wenn nein, in kritischen Abschnitt gehen und z := z - 1
+* V: setzt z := z + 1, wenn q nicht leer --> freisetzen (wake up)
+
+Semantik z:
+
+* z &gt; 0 : Anzahl Threads, die KA noch betreten können
+* z = 0 : KA gesperrt für weitere Threads
+* z &lt; 0 : nicht möglich bei dieser Implementierung
+
+
+**Vorteile**:
+
+* kein busy-waiting
+* einfache Nutzung
+
+**Nachteile**:
+
+* Gefahr von Programmierfehlern (Bsp. V() vergessen)
+* Restriktionen: setzt Betriebssystem-Unterstützung voraus
+* warten auf einen von mehreren Semaphoren nicht möglich
+
+
+-------------------------------------------------------------------------------------------
+
+
+# Verklemmungen
+
+Eine Menge von Prozessen heißt verklemmt, wenn jeder Prozess dieser Menge auf ein
+Ereignis wartet, das nur von einem anderen Prozess dieser Menge ausgelöst 
+werden kann.
+
+## Charakterisierende Bedingungen
+
+**Notwendig ist einzeln jede der Bedingungen**:
+
+1. gegenseitiger Ausschluss bei Benutzung von BM
+2. Nachfordern von BM (hold and Wait)
+3. keine Verdrängung (Entzug der BM) möglich
+4. zyklische Wartesituation
+
+* Hinreichend ist:
+  - (1) AND (2) AND (3) AND (4) 
+
+## Gegenmaßnahmen:
+
+* Gegenseitiger Ausschluss (Mutual Exclucion)
+  - z.B. Spooling -> nur ein Prozess (Daemon) erhält BM
+
+  
+* Nachfordern
+  - Postulat: alle BM müssen bei Start angefordert werden
+  - Freigabe aller BM bei Neuforderung
+  - Problem: Dynamik, BM-Auslastung
+
+  
+* Nicht-Verdrängbarkeit
+  - bei logischen Betriebsmitteln (Transaktionen)
+
+  
+* Zyklische Wartebedingung
+  - sorgfältige Betriebsmittelzuteilung (BMZ)
+
+  
+## sorgfältige BMZ
+
+* Postulat:
+  - Anforderung der BM in festgelegter Reihenfolge
+* zahlreiche Einzelsitiationen in Betriebssystemen
+
+## Bank-Algorithmus für 1 Betriebsmittel-Typ
+
+* Gegeben:
+  - Prozesssystem P 
+  - maximale Anzahl G von BM-Exemplaren
+  - maximale Anzahl KP von BM-Exemplaren, die Prozess P<sub>i</sub> &isin;P im Laufe seiner Existenz benötigt mit KP &le; G
+* Zustand
+  - Vektor der momentan den Prozessen zugeteilten BM-Exemplare
+
+  
+Ein Zustand heißt *sicher*, wenn
+
+* keine Verklemmung vorliegt
+* es eine Reihenfolge der Erfüllung aller Anforderungen gibt, ohne dass eine Verklemmung auftritt
+
+Andernfalls heißt der Zustand *unsicher*.
+
+Idee des Bank-Algorithmus:  
+Zuteilung nur vornehmen, wenn Nachfolgezustand immer noch sicher ist, andernfalls muss Prozess warten.  
+
+* Probleme:
+  - Komplexität: O(2n) n: Anzahl der Prozessen
+  - Mehrere BM-Typen: mehrere "Währungen"
+  - Basis: maximale Anzahl genutzter BM-Exemplare, Kenntnis, Eintreten dierser Situation
+  - Blockierdauer nicht kalkulierbar
+
+## Entdecken und Beseitigen
+
+Symptom:  
+Operation dauert wesentlich länger als erwartet, z.B. TIMEOUT als
+zusätzlicher Parameter blockierender Operationen:
+
+Diagnose:  
+Feststellen ob zyklische Wartebedingung vorliegt
+
+Therapie: 
+ 
+* Verdrängung von Betriebsmitteln
+* Entfernen von Prozessen
+* Zurücksetzen
+  - regelmäßiges Erstellen von Rücksetzpunkten
+  - Zurücksetzen vor die verursachende BM-Anforderung
+  - Außenwelt-Problem
+  - Transaktionen
+
+Falls das vermeiden zu aufwendig ist, müssen Verklemmungen erkannt und behoben werden können.
+
+
+
+----------------------------------------------------------------------------------------
+
+
+
+# Quantitative Methoden
+
+**Problem: Erfüllen von QoS-Anforderungen mit zeit- bzw. größenbeschränkten Ressourcen**
+
+## Scheduling
+
+#### Begriff  
+Vorgehensweise zur **Einplanung** von Aufgaben, die durch ein aktives Betriebsmittel zu bearbeiten sind
+
+**Entscheidungsstrategien** legen die Reihenfolge fest, in der sich Prozesse 
+um den Prozessor bewerben bzw. in der sie aus einer Warteschlange 
+ausgewählt werden.
+
+Aufgabe der Schedulingtheorie ist es solche Strategien zu entwickeln und zu bewerten
+
+#### Ziele
+
+* hohe Prozessorauslastung  &eta; / U
+* größtmöglicher Durchsatz D
+* minimale Gesamtbearbeitungszeit t<sub>g</sub>
+
+und
+
+* geringe durchschnittliche Verweilzeit  t&#772;<sub>v</sub>
+* minimale Antwortzeit
+* garantierte Reaktionszeit
+
+! Diese beiden Gruppen sind nicht vereinbar
+
+* Gerechtigkeit
+
+
+#### Einordnung und Abgrenzung
+
+* Ablaufpalnung (Teilgebiet der Operationsforschung)
+* Prozessauswahl (System-S.) - Prozessorzuteilung (Dispatching)
+* Strategie - Algorithmus - Implementation
+
+
+#### Ablaufplan (Schedule)
+
+zeitabhängige Zuordnung von Prozessen zu Prozessoren
+
+#### Klassifikationsgesichtspunkte
+
+* Ein-/Mehrprozessorsysteme
+* Bearbeitung ohne/mit Prozessorentzug
+* Deterministische/probabilistische Modelle
+* Echtzeitbedingungen
+
+
+#### Modellannahmen
+
+Gegeben:
+
+* J = \{J<sub>1</sub> , ... , J<sub>n</sub>\}  - Menge von Jobs
+* R &sube; J &times; J  - Präzedenzrelation
+* t: J &rarr; &#8477;<sup>+</sup>  - Abbildung, wobei t(J<sub>i</sub> =: t<sub>i</sub>)
+
+
+#### Deterministische Modelle
+
+![Bild](img/qm_detmod.png "Knotennetz und Pfeilnetz")
+
+
+* Vorgangsknotennetz:
+
+  - Knoten stellen die Prozesse da. Es wird die Ausführzeit drangeschrieben.
+Knoten können mehrere Ausgehende Pfeile und mehrere Eingehende Pfeile haben
+
+
+* Vorgangspfeilnetz
+
+  - Pfeile stellen die Prozesse da. Es wird die Ausführzeit drangeschrieben.
+Pfeile können mehrere Inputs haben, dürfen aber nur einen Output haben.
+Um Vorgangsknotennetz zu Vorgangspfeilnetz zu überführen sind Scheinvorgänge
+nötig.
+
+#### Scheduling in 1-Prozessor-Systemen ohne Entzug
+
+![Bild](img/fifo_lifo_spt.png "LIFO, FIFO, SPT")
+
+#### Scheduling in 1-Prozessor-Systemen mit Entzug
+
+![Bild](img/round_robin.png "Round Robin")
+
+![Bild](img/mlf.png "Multilevel-Feedback")
+
+
+#### Scheduling in Mehrprozessor-Systemen
+
+* *m* identische Prozessoren. Enumeration: Aufwand O (e<sup>jobanzahl</sup>)
+* **Optimalitätskriterium t<sub>g</sub> &rarr; Min!**
+  - R bel.: polynomialer Algorithmus nur für m = 2, t<sub>i</sub> = const. bekannt
+  - R = &empty;:	
+    + m = 1 	trivial
+    + m &gt; 1: Approximation
+	+ **LPT** "Largest Processing Time"
+
+
+* **Optimalitätskriterium t&#772;<sub>v</sub> &rarr; Min!**
+  - R = &empty;: SPT ist optimal (sonst NP-vollständig)
+
+
+![Bild](img/mehrprozessor_bsp.png "Mehrprozessor-System")
+
+
+## Echtzeit-Scheduling
+
+#### Grundbegriffe
+
+* **Job** (Planungseinheit für Scheduling)
+  - e = Ausführungszeit, Bearbeitungszeit (execution time)
+  - r = Freigabezeit, Bereitzeit (release time)
+  - d = Zeitschranke, Frist (deadline)
+
+  
+* **Task** (Menge "zusammengehörender" Jobs)
+  - Speziell: **Jobnetz** oder **periodische Tasks**
+
+  
+* **Deadline**
+  - hart / weich
+  
+  
+* **Schedule**
+  - zeitliche Zuordnung von Jobs zu Prozessoren
+  - gültig: 	Zuordnung verletzt keine der gegeben Bedingungen	(valid)
+  - ausführbar:	alle Zeitschranken werden eingehalten				(feasible)
+
+
+* **Scheduling**
+  - Einplanung: Vorgehen (Algorithmus), das bei gegebener Taskbeschreibung einen Ablaufplan bestimmt
+  - Prozessor-Zuordnung: Auswahl eines Jobs durch Scheduler des Systems
+
+  
+* **Einplanbarkeit**
+  - Taskmenge einplanbar (schedulable, feasible) bei einem Scheduling-
+  Algorithmus, wenn der Algorithmus einen ausführbaren Ablaufplan erzeugt
+
+
+* **Admission** (Zulassung)
+  - Verfahren, das die Einplanbarkeit einer Taskmenge entscheidet
+
+  
+* **Optimalität** bzgl. Einplanbarkeit
+  - eines Scheduling-Verfahrens in einer Klasse C von Verfahren:
+    - erzeugt für jede Tasktmenge T einen ausführbaren Ablaufplan, sofern T
+überhaupt mit einem Verfahren aus C eingeplant werden kann
+
+#### Modellannahmen Echtzeit-Scheduling
+
+jede Task T<sub>i</sub> ist persiodische Folge von Jobs mit der Peropde p<sub>i</sub>  
+p<sub>i</sub> ist zugleich Zeitschranke. Die Bearbeitungszeit e<sub>i</sub> ist konstant  
+Prozessor ist entziehbar  
+Task sind von einander unabhängig
+
+#### Verfahren
+
+**RMS** "Rate Monotonic Scheduling"  
+statische Taskpriorität proportional zu Ankunftsrate
+EDF "Earliest Deadline First"
+
+**Optimalitätseigenschaft**  
+RMS ist optimal in der Klasse aller statischen, EDF in der Klasse aller 
+(dynamischen) Scheduling-Algorithmen (in Einprozessor-Systemen für 
+unabhängige, verdrängbare Tasks)
+
+**Existenz eines Ablaufplans**:	 
+![Bild](img/admission_krit.png "Admission-Kriterium")
+
+
+
+
+
+
+
+
+
+
+
+
+
+</xmp>
+<!-- MARKDOWN ......................... -->
+
+<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+</html>
