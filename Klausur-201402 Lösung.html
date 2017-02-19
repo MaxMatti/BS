@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style_nicht.css" />
 </head>
 <title>Klausur Betriebssysteme und Sicherheit, 27.02.2014 </title>
 
@@ -379,6 +379,77 @@ while (1) {
 		} 
 	}
 ```
+
+----------------------------------------------
+
+
+
+# Aufgabe 7 – Dateisystem (8 Punkte)
+
+Ein Unix-artiges Dateisystem organisiert alle Dateiinhalte und Metadaten in Blöcken auf dem 
+Speichermedium. Blöcke enthalten entweder Daten (D), Inodes (I), Verzeichniseinträge (V), eine 
+Allokations- Bitmap für Inodes oder Blöcke (IA oder IB), oder den Superblock (SB). Die Größe 
+eines Blocks beträgt 4 KiByte. Der initiale Zustand des Dateisystems ist wie folgt:
+
+![Bild](img/dateisystem.png "Aufgabe 7")
+
+a) Eine Anwendung öffnet die Datei D1 im Wurzelverzeichnis des Dateisystems 
+und liest deren Inhalt. Welche Daten- und Metadatenblöcke muss das Betriebssystem lesen? 
+In welcher Reihenfolge erfolgen die Zugriffe? (2P)
+
+
+b) Die Anwendung legt eine neue Datei D2 im Wurzelverzeichnis an und speichert 5000 Byte Daten darin.Tragen 
+Sie in das unten stehende Schema den neuen Zustand des Dateisystems nach Abschluss der Operation ein. 
+Kennzeichnen Sie alle Blöcke, deren Inhalt sich geändert hat. (3P)
+
+
+| Block  | 0  |  1 | 2  | 3  | 4  | 5  | 6  | 7  | 8   | 9  | 10  |  11 |
+|:-:|---|---|---|---|---|---|---|---|---|---|---|---|
+| Typ  |   |   |   |   |   |   |   |   |   |   |   |   |
+| Inhalt  |   |   |   |   |   |   |   |   |   |   |   |   |
+|  Geändert |   |   |   |   |   |   |   |   |   |   |   |   |
+
+
+Zur Leistungssteigerung puffert das Betriebssystem neue oder modiﬁzierte Blöcke zunächst im Hauptspeicher und 
+schreibt diese später im Hintergrund auf das Speichermedium. Dabei wird folgende Strategie angewendet:  
+Zunächst werden alle Datenblöcke (D) geschrieben, danach Inode-Blöcke (I) gefolgt von Verzeichnisblöcken (V) 
+und zum Schluss alle geänderten Blöcke der Allokations-Bitmaps (IA und IB) und der Superblock (SB). 
+
+c) Welche Inkonsistenzen können auftreten, wenn das System etwa in Folge eines Stromausfalls abstürzt bevor 
+alle Blöcke geschrieben wurden? (1P)
+
+
+
+d) Geben Sie eine konkrete Schreibstrategie für die in Teilaufgabe b) beschriebene Operation auf der 
+Datei D2 an, bei der Konsistenz auch dann sichergestellt ist, wenn das System an beliebiger Stelle 
+abstürzt. Sind nach dem Neustart des Systems noch Korrekturen erforderlich und wenn ja, welche? (2P)
+
+
+## Lösung
+
+**a)**
+
+
+
+**b)**
+
+
+
+**c)**
+
+
+
+**d)**
+
+
+
+
+
+
+
+
+
+
 
 
 
