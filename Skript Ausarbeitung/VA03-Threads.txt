@@ -1,0 +1,90 @@
+Threads
+	fair“: jeder Thread erhält “angemessenen” Anteil CPU-Zeit kein Thread darf CPU 
+		für sich allein beanspruchen. Wohlverhalten von Threads darf bei der 
+		Implementierung von Threads keine Voraussetzung sein 
+	#Definition Thread
+		*sequentielles Programm
+		*parallel arbeitend zu anderen Threads
+		*von einem betriebssystem zur Verfügung gestellt
+	#Zustände
+		*Aktiv
+			Thread wird gerade auf der CPU ausgeführt
+		*Blockiert
+			Thread wartet auf ein Ereignis um weiterarbeiten zu können
+		*Bereit
+			Nicht Aktiv aber auch nicht blockiert
+		#Mögliche Übergänge:
+			*Aktiv -> Blockiert		//Fehlende Betriebsmittel oä.
+				// Warten auf Botschaft oder Zwischenergebnis
+			*Aktiv -> Bereit			// zum Beispiel Rechenzeit zu Ende
+			*Blockiert -> Bereit		// Betriebsmittel stehen zur Verfügung
+			*Bereit -> Aktiv			// Es wird zu dem Thread geswitcht
+	#Betriebsmittel eines Threads
+		*Kern-Stack
+		*CPU State
+		*Thread-Zustand
+		*Verweis auf Adressraum
+		*Scheduling-Attribute
+		-> TCB (Thread Control Block)
+	
+	#Ablauf von switch_to(Ziel-Thread)
+		store_CPU_State();					//in den TCP der im Stack liegt
+		TCBTAB[Aktueller-Thread].StackPointer = StackPointer; 
+			//Speichern der Daten in TCB Tabelle
+		Aktueller-Thread = Ziel-Thread;		// Thread switch
+		SP = TCBTAB[Aktueller-Thread].StackPointer;
+		load_CPU_State();					// laden aus dem TCP aus dem Stack
+
+Kritischer Abschnitt
+	Den Programmteil, in dem auf gemeinsamen Speicher gearbeitet wird, nennt man 
+		Kritischer Abschnitt (KA).
+	Wettläufe um den Speicher nennt man Race Condition
+	
+	#Anforderungen
+		*keine zewi Threadsdürfen sich zur selben Zeit im selben KA befinden.
+			-> Wechselseitiger Ausschluss 		//SICHERHEIT
+		*Jeder Thread, der einen kritischen Abschnitt betreten möchte, muss ihn auch
+			irgendwann betreten können.			//LEBENDIGKEIT
+		*Es dürfen keine Annahmen über die Anzahl, Reihenfolge oder relativen
+			Geschwindigkeiten der Threads gemacht werden
+	
+	#Lösungsansätze
+		*Implementierung mittels Interruptsperrre (Unterbrechungssperre) //FOLIE 70
+			Vorteil
+				einfach
+				effizient
+			Nachteil
+				Nicht im User-Mode
+				manche KA sind zu lang
+				funktioniert nicht auf Mulitprozessor-Systemen
+			Konsequenz
+				wird nur in BS für 1 CPU Rechner genutzt und da nur im BS-Kern.
+		
+		*Implementierung mit HW Unterstützung // FOLIE 73 
+			Vorteil
+				funktioniert im MP-Fall
+				es können mehrere KA so implementiert werden
+			Nachteil
+				busy waiting
+				hohe Busbelastung
+				ein Thread kann verhungern
+				nicht für Threads auf demselben Prozessor
+			Konsequenz
+				geeignet nur für Kurze KA bei kleiner CPU-Anzahl
+				
+		*Lösung nach Peterson //FOLIE 79-82
+			Vorteile
+				funktioniert im MP Fall
+				es können mehrere KA so implementiert werden
+				keine HW Unterstützung nötig
+			Nachteile
+				busy waiting
+				hohe Busbelastung
+				//vielleicht nur für 2 Threads?!
+		*Semaphor
+			Ist eine Datenstruktur, die aus einer Ganzzahl und den Nutzungsoperationen,
+				"Reservieren/Probieren" und "Freigeben" besteht
+			Sie eignen sich vorallem zur Verwaltung von beschränkter Ressourcen, auf die
+				mehrere Prozesse oder Threads zugreifen sollen, sowie zur Koordination 
+				asynchroner Abläufe.
+				

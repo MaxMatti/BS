@@ -1,0 +1,82 @@
+Ein einfaches Dateisystem
+	Aufgaben eines Dateisystems
+		*Persitenz von Daten
+		*Basismechanismen für Datenbanken
+	Zentrale Herausforderungen
+		*Hardwareeigentschaften des persistenten Speichermediums
+		*Robustheit
+	NEHMER Begriffe
+		Dateisystem
+			*BS-Komponente, Die Anwendungsprogramme einen effizienten Zugriff auf
+				persistent gespeicherte Daten ermöglicht
+		Datei
+			*"Behälter" für die dauerhafte Speicherung von Informationen (gleich 
+			oder ähnlicher Struktur) unter einem inhaltlichen Gesichtspunkt
+			*codiert in Bytes, durch ein Bezeichner repräsentiert
+		Verzeichnis
+			*besondere, vom Dateisystem verwaltete Datei zu Strukturierung der auf 
+				Externspeicher abgelegten Dateien.
+	Datei-Operationen
+		OPeration						typische Parameter
+		*Erzeugen (Create) 				Name, Attribute, Zugriffsart → Handle
+		*Entfernen (Delete, Unlink) 	Handle
+		*Öffnen (Open) 					Name, Zugriffsart → Handle
+		*Schließen (Close) 				Handle
+		*Lesen (Read) 					Handle, Anzahl Zeichen, Puffer
+		*Schreiben (Write) 				Handle, Anzahl Zeichen, Puffer 
+		*Append 						Handle, Anzahl Zeichen, Puffer
+		*Seek 							Handle, Position
+		*Lesen/Setzen von Attributen
+		*Umbenennen
+		*„Einblenden“
+	Benennung (von Dateien)
+		Aufgabe
+			*Benennen: symbolisch, (auch) Mensch als Benutzer
+			*Identifizieren: Programme, Datenbanken als Benutzer
+			*(schnelles) Lokalisieren
+			*Zugreifen
+		Benuter legen Dateinamen fest
+			*innerhalb bestimmter Genzen, je nach System
+			*nach Konventionen
+				+Folge lesbarer Zeichen
+				+Groß-/Kleinschreibung signifikant?
+				+kontextabhängig?
+				+.. //Weiteres auf Folie 6
+	Datei-Attribute
+		Zugriffschutz
+			*Eigentümer, Besitzer, Rechte des Besitzers und anderer
+		Zeiten
+			*Erzeugung, letzte Modifikation, letzter Zugriff, ...
+		Organisatorisches
+			*aktuelle/macimale Größe
+			*Verwaltungsinformationen
+	Datei-Typen
+		Beispiele:
+			*normale Dateien
+			*Verzeichnisse
+			*E/A-Geräte
+			*Datenströme
+			*Symbolic Links
+	Zugriffsstrukturen
+		flach
+			*zugriff per index in BYTE ARRAY
+			*Lesen/Schreiben in beliebigen Einheiten an beliebigen Stellen
+			*Aufprägung von Strukturen durch Anwendungen
+		"Record"-Strukturen 
+			*Zugriff per "Key"
+			*Länge der Records konstant oder variabel
+			*ein Datensatz (record) pro Zugriff (Lesen/Schreiben)
+				+sequentiell
+				+direkter Zugriff über Schlüssel
+				+Kombiniert: "indexsequentiell"
+			*"Key-Value Stores"
+	Verzeichnisse und Pfadnamen
+		Ziel:	Systemweite Eindeutigkeit von Dateinamen
+		Lösung:
+			*Namen eindeutig in einem "Kontext"
+			*auch Kontexte haben Namen
+		Pfadname:
+			*Folge von Teilnamen
+			*Namens-Auflösung:
+				von einem Ausgangskontext ausgehend wird jeder Teilname in seinem
+				Kontext Interpretiert

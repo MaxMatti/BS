@@ -1,0 +1,127 @@
+Quantitative Methoden
+	Problem 
+		Erfüllen von QoS-Anforderungen mit zeit- bsz. größen beschränkten Ressourcen
+	Gegenstand
+		Scheduling
+			basierend auf
+				-deterministischen Modellen
+				-probabilistischen Modellen
+		Hauptspeicherverwaltung
+		Externspeicherzugriff
+		Dateisysteme
+		Echtzeitsysteme
+	Begriffe
+		Vorgehensweise zur EINPLANUNG von Aufgaben, die durch ein aktives 
+			Betriebsmittel zu bearbeiten sind
+		ENTSCHEIDUNGSSTRATEGIEN, legen die Reihenfolge fest, in der sich Prozesse 
+			um den Prozessor bewerben bzw. in der Sie aus einer Warteschlange 
+			ausgewählt werden.
+		Aufgaben der Schedulingtheorie ist es solche Strategien zu Entwickeln und zu 
+			Bewerten
+	Ziele können sein:
+		1. hohe Prozessorauslatung						ƞ/U
+		1. größtmöglicher Durchsatz					D
+		1. minimale Gesamtbearbeitungszeit				t_g
+														
+		2. geringe durchschnittliche Verweilzeit		‾t_v‾
+		2. mininmale Antwortzeit
+		2. garantierte ReaktionsZeit
+		
+		//Diese Beiden Gruppen sind nicht vereinbar.
+		
+		Gerechtigkeit
+		
+	Einordnung und Abgrenzung
+		Ablaufpalnung //Teilgebiet der Operationsforschung
+		Prozeßauswahl //System-S.
+		-Prozessorzuteilung //Dispatching
+		Strategie - Algorithmus - Implementation
+		
+	Ablaufplan (Schedule)
+		zeitabhängige Zuordnung von Prozessen zu Prozessoren
+	
+	Klassigikationsgesichtspunkte
+		Ein-/Mehrprozessorsysteme
+		Bearbeitung ohne/mit Prozessorentzug
+		Deterministische/probabilistische Modelle
+		Echtzeitbedingungen
+	
+	Gegeben:
+		J 			Menge von Jobs
+		R⊆ J× J		Präzedenzrelation
+		t : J → ℝ+	Abbildung, wobei t(J_i) =: t_i
+		
+	Vorgangsknotennetz
+		Knoten stellen die Prozesse da. Es wird die Ausführzeit drangeschrieben.
+		Knoten können mehrere Ausgehende Pfeile und mehrere Eingehende Pfeile haben
+	Vorgangspfeilnetz
+		Pfeile stellen die Prozesse da. Es wird die Ausführzeit drangeschrieben.
+		Pfeile können mehrere Inputs haben, dürfen aber nur einen Output haben.
+		Um Vorgangsknotennetz zu Vorgangspfeilnetz zu überführen sind Scheinvorgänge
+			nötig.
+	
+	SCHEDULING in 1-Prozessor-Systemen ohne Entzug
+		FIFO/LIFO
+		
+		SPT	"Shortest Processing Time"
+			ist bei R = Ø optimal bzgl ‾t_v‾ → Min
+	
+	SCHEDULING in 1-Prozessor-Systemen mit Entzug
+		RR "Round Robin"
+			Prozeßwechsel mit konstantem Zeitquant Q
+		MLF "Multilevel-Feedback"
+			Prozeßwechsel mit Zeitquant Q und Prioritäten
+	
+	SCHEDULING in Mehrprozessor-Systemen 
+		Optimalitätskriterium t_g → Min
+			LPT "Largest Processing Time"
+		Optimalitätskriterium ‾t_v‾ → Min
+			R = Ø: SPT optimal
+			
+Echtzeit-Scheduling
+	Grundbegriffe
+		Job
+			e Ausführzeit, Bearbeitungszeit (execution time)
+			r Freigabezeit, Bereitzeit		(release time)
+			d Zeitschranke, Frist			(deadline)
+		Task
+			Menge "zusammengehörender" Jobs
+			Jobnetz oder periodische Task
+		Deadline
+			hart/weich
+		Schedule
+			zeitliche Zuordnung von Jobs zu Prozessoren
+			gültig: 	Zuordnung verletzt keine der gegeben Bedingungen	(valid)
+			ausführbar:	alle Zeitschranken werden eingehalten				(feasible)
+		Scheduling
+			Einplanung: Vorgehen (Algorithmus), das bei gegebener Taskbeschreibung 
+				einen Ablaufplan bestimmt
+			Prozessor-Zuordnung: Auswahl eines Jobs durch Scheduler des Systems
+		Einplanbarkeit
+			Taskmenge einplanbar (schedulable, feasible) bei einem Scheduling-
+				Algorithmus, wenn der Algorithmus einen ausführbaren Ablaufplan erzeugt
+		Admission(Zulassung)
+			Verfahren, das die Einplanbarkeit einer Taskmenge entscheidet
+		Optimalität bzgl Einplanbarkeit
+			eines Scheduling-Verfahrens in einer Klasse C von Verfahren:
+				erzeugt für jede Tasktmenge T einen ausführbaren Ablaufplan, sofern T
+				überhaupt mit einem Verfahren aus C eingeplant werden kann
+	
+	Modellannahmen 
+		jede Taskt T_i ist persiodische Folge von Jobs mit der Peropde p_i.
+		p_i ist zugleich Zeitschranke. Die Bearbeitungszeit e_i ist konstant
+		Prozessor ist enziehbar
+		Task sind von einander unabhängig
+	
+	Verfahren
+		RMS "Rate Monotonic Scheduling"
+			statische Taskpriorität proportional zu Ankunftsrate
+		EDF "Earliest Deadline First"
+	
+	Optimalitätseigenschaft
+		RMS ist optimal in der Klasse aller statischen, EDF in der Klasse aller 
+			(dynamischen) Scheduling-Algorithmen (in Einprozessor-Systemen für 
+			unabhängige, verdrängbare Tasks)
+	Existenz eines Ablaufplans:	
+		bei RMS, falls: 	ƞ = SUM von i=1 bis n(e_i/p_i) ≤ n * ((n-te Wurzel(2)) -1))
+		bei EDF, genau dann: ƞ = SUM von i=1 bis n(e_i/p_i) ≤ 1

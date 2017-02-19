@@ -1,0 +1,72 @@
+Verklemmungen
+	Eine Menge von Prozessen heißt verklemmt, wenn jeder Prozess dieser Menge auf ein
+		Ereignis wartet, das nur von einem anderen Prozess dieser Menge ausgelöst 
+		werden kann.
+		
+	#Charakterisierende Bedingungen
+		*Notwendig ist einzeln jede der Bedingungen:
+			(1) gegenseitiger Ausschluss bei Benutzung von BM
+			(2) Nachfordern von BM (hold and Wait)
+			(3) keine Verdrängung (Entzug der BM) möglich
+			(4) zyklische Wartesituation
+		*Hinreichend ist:
+			(1) AND (2) AND (3) AND (4) 
+	#Gegenmaßnahmen:
+		(1) Gegenseitiger AUsschluss(Mutual Exclucion)
+			z.B. Spooling -> nur ein Prozess(Daemon) erhält BM
+		(2) Nachfordern
+			Postulat: alle BM müssen bei Start angefordert werden
+				Freigabe aller BM bei Neuforderung
+			Problem: Dynamik
+				BM-Auslastung
+		(3)	Nicht-Verdrängbarkeit
+			bei logischen Betriebsmitteln (Transaktionen)
+		(4) Zyklische Wartebedingung
+			sorgfältige Betriebsmittelzuteilung (BMZ)
+	#sorgfältige BMZ
+		*Postulat:
+			Anforderung der BM in festgelegter Reihenfolge
+		*zahlreiche Einzelsitiationen in Betriebssystemen
+	#Bank-Algorithmus für 1 Betriebsmittel-Typ
+		*Gegeben:
+			Prozesssystem P 
+			maximale Anzahl G von BM-Exemplaren
+			maximale Anzahl KP von BM-Exemplaren, die Prozess Pi ∈P im Laufe seiner 
+				Existenz benötigt mit KP ≤ G
+		*Zustand
+			Vektor der momentan den Prozessen zugeteilten BM-Exemplare
+		
+		Ein Zustand heißt sicher, wenn
+			*keine Verklemmung vorliegt
+			*es eine Reihenfolge der Erfüllung aller Anforderungen gibt, ohne dass
+				eine Verklemmung auftritt
+		Andernfalls heißt der Zustand unsicher
+		
+		Idee des Bank-Algorithmus:
+			Zuteilung nur vornehmen, wenn Nachfolgezustand immer noch sicher ist,
+				andernfalls muss Prozess warten.
+		*Probleme
+			Komplexität: O(2n) n: Anzahl der Prozessen
+			Mehrere BM-Typen: mehrere "Währungen"
+			Basis: maximale Anzahl genutzter BM-Exemplare
+				Kenntnis
+				Eintreten dierser Situation
+			Blockierdauer nicht kalkulierbar
+	
+	#Entdecken und Beseitigen
+		Symptom:
+			Operation dauert wesentlich länger als erwartet, z.B. TIMEOUT als
+				zusätzlicher Parameter blockierender Operationen:
+		Diagnose:
+			Feststellen ob zyklische Wartebedingung vorliegt
+		Therapie:
+			Verdrängung von Betriebsmitteln
+			*Entfernen von Prozessen
+			*Zurücksetzen
+				regelmäßiges Erstellen von Rücksetzpunkten
+				Zurücksetzen vor die verursachende BM-Anforderung
+				Außenwelt-Problem
+				Transaktionen
+	
+	Falls das vermeiden zuaufwendig ist müssen Verklemmungen erkannt und behoben
+		werden können.

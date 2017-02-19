@@ -1,0 +1,257 @@
+Speicher
+	#Statische Speicherverwaltung
+		*keine Ein-/Auslagerung von Programmen/Daten
+		*Einfachrechner (Embedded Systems)
+		*Monoprogramming (ein Programm gleichzeitig)
+		*Programme werden nach einander geladen und asugeführt
+	
+	#Multiprogramming
+		Mehrere Benutzer-Programme gleichzeitig im Rechner; für jedes Benutzerprogramm
+			gibt es einen oder mehrere Prozesse
+		Motivation(vgl. Kapitel zu Threads):
+			*mehere Benutzer eines Rechners (multiuser)
+			*mehrere Benutzerprozesse eines Benutzers
+			*Benutzerprozesse und Systemprozesse
+		Multiprogramming vs. Parallele Threads/Prozesse:
+			*parallele Prozesse Voraussetzung für Multiprogramming
+			*denkbar ist Monoprogramming mit vielen parallelen Prozessen
+				Die ersten BS fpr Parallelrechner erlaubten nur ein Benutzerprogramm
+			*Heute: Supercomputer werden in Partitionen aufgeteilt Monoprogramming
+				pro Partition
+		Relokation //Folie 6
+			Programme verwenden unterschiedliche Adressen, wenn sie in 
+				unterschiedlichen Partitionen ablaufen
+			Abhilfe: Umsetzen der Adressen
+				*beim/vor dem Laden (Software)
+				*zur Laufzeit(Hardware)
+		Schutz
+			Überprüfung der Adressen zur Laufzeit
+		Einfache Variante (BR/LR) (Basis-Register)
+			*gesamte Adressierung relativ zu Basis-Register
+				z.B: load R, 100 // Zugriff auf: BR+100
+			*Unterbindung aller Zugriffe auf Bereiche außerhalb [BR,LR]
+			*Konsequenz für Prozesse: bei Umschaltung müssen auch BR und LR
+				umgeschaltet werden
+		Wachsen von Partition
+			Algorithmen zur "Minimierung" des Verschnitts
+			*First fit
+			*Best fit
+			*Buddy
+			*..
+		Swapping
+			Ein-/auslagern ganzer Prozesse/Partitionen
+				Ganze Prozesse/Partitionen werden auf persistenten Speicher (zB Platte)
+					und bei Gelegenheit wieder eingelagert.
+			*Mehrebenen-Scheduling:
+				auch bereite Prozesse werden ausgelagert
+		Mehrebenen-Scheduling:
+			Zu den Zuständen aktiv blockiert und bereit kommen noch ausgelagert 
+				bereit und ausgelagert blockiert
+		Nachteile und Probleme von Partitionen
+			*Verschnitt
+			*Programmstartzeiten
+			*Limitation der größe eines Prozesses durch verfügbaren Hauptspeicher
+			*Ein-Auslagerungszeit
+			*"ruhende" Teile
+			*Platzbedarf auf Externspeicher
+		Overlays //Folie 13
+			Programmierer organisiert Programm in Stücke, die nicht gleichzeitig
+				im Hauptspeicher sein müssen
+	
+	#Virtueller Speicher (Paging)
+		Adressraum
+			Virtueller/Logischer AR: dem laufenden Prozess sichtbar
+			Pyhsischer AR:	auf Maschinenebene "physisch" verwandt
+				*Adressleitungen auf Speicher- und Peripheriebus
+				*Häufig statisch ber HW interpretiert
+		Regionen
+			Aufbau von Adressräumen:
+				Logisch zusmmenhängende Adressbereiche nennen wir Regionen
+				Speicherobjekte werden Regionen zugeorndet("Mapping")
+		Anforderungen an Virtuelle Adressräume
+			*Groß
+			*Frei teil und nutzbar
+			*Fehlermeldung bei Zugriff auf nicht belegte Bereiche
+			*Schutz vor Zugriffen aus anderen Adressräumen
+			*Einschränken der Zugriffsrechte auf bestimmte Bereiche
+			*sinnvoller Einsatz des (Haupt-)Speichers
+				+damit Speicher anderweitig nutzbar
+				+wegen kurzer Ladezeiten
+			*Transpatent für Programmierer (steuerbar, aber ohne Aufwand)
+		Virtueller Speicher gibt jedem Prozess einem eigenen, vom physischen
+			Hauptspeicher unabhängigen "logischen" Adressraum,
+		Basiert auf ..
+			*einer Zerhackung der Adressräume/Hauptspeicher/... in eine eineheitliche
+				Größe (Seiten/Pages, Kacheln/Pageframes, Blöcke)
+			*einer Adressumsetzung durch Hardware und Betriebssystem
+			*der Nutzung eines externen Speichermediums
+			*einer Ein- und Auslagerung von Teilen des logischen Adressraumes eines 
+				Prozesses durch das Betriebssystem
+		Prinzip der Lokalität
+			Beobachtung
+				*Der von einem Prozess inerhalb eines bestimmten Zeitintervalls
+					benötigte Teil seines Adressraumes verändert sich nur mehr oder
+			Ursachen
+				*sequentielle Arbeit eines VON-NEUMANN-Rechners
+				*Programmcode enthält Schleifen
+				*Programmierung in Modulen
+				*Zugriff auf grppierte Daten
+	
+	##Addressumsetzung
+		Memory Management Unit (MMU)
+			Aufgaben:
+				*Abbildung: virtuelle → physische Adressen.
+				*Schutz bestimmter Bereiche (lesen/schreiben)
+				*Betriebssystemaufruf bei abwesenden/geschützten Seiten/Pages
+					//Seitenfehler (page fault)
+				*Schutz der Adressräume untereinander
+			Beispiel zur MMU Folie 29f
+		Seiten Attribute
+			*present	Seite befindet sich im HS
+			*modified	schreibender Zugriff ist erfolgt ("dirty")
+			*referenced irgendein ugriff ist erfolgt
+			*protection	erlaubter Zugriff in Abhängigkeit von CPU-Modus
+			*caching 	ein/aus (zB wegen E/A) 	//Später noch mal genauer
+		Ablauf Seitenfehler
+			*Zurücksetzen des auslösenden Befehls
+			*Umschaltung der Prozessormodus und des Kellers
+			*Ablegen einer Beschreibung des Zustandes, der auslösenden Adresse und
+				der Zugriffsart auf den Keller
+			*Sprung in den Kern
+			*Seitenfehlerbehandlung durch Betriebssystem
+			*iret(letzte Instuktion des Handlers)
+		Baumstrukturierte Seiten /Page Table Walk
+			Eigenschaften
+				*beliebig schachtelbar → 64-Bit-Adressräume
+				*Seitentabellen nur bei Bedarf im Hauptspeicher bei Zugriff auf
+					Seitentabelle kann Seitenfehler auftreten
+				*Zugriff auf Hauptspeicher wird noch langsamer durch 2 oder mehrere
+					Umsetzungsstufen
+				*Hierachiebildung möglich
+					zB durch Schreibsperre in höherstufiger Tabelle ist ganzer 
+					Adressbereich gegen Schreiben schützbar
+				*Gemeinsame Nutzung("Sharing")
+					Seiten und größere Bereiche in mehreren Adressräumen gleichzeitig
+			Ablauf Folie 40
+		Inverse Seitentabelle
+			Grundidee
+				*zu jeder Kachel wird Prozess-ID, Seitennummer geführt
+				*bei Zugriff ("TLB-miss" Folie 41-42) wird gesucht
+			Implementierung als HASh-Tabellen (Hased Page Tables)
+				Vorteil
+					*kleine Seitentabellen
+					*abhängig von Anzahl Kacheln unabhängig von Größe des Adressraums
+				Nachteile:
+					*keine Hierachiebildung (z.B Schreibschutz für 4MB)
+					*Sharing aufwändig
+					*Suchaufwand
+	
+	##Lazy Copying
+		Verzögertes Kopieren (lazy copying, copy on write)
+		"Kopieren":
+			*Eintragen des zu kopierenden Bereichs an Zieladresse
+			*beide gegen Schreiben schützen
+		Entkoppeln:
+			*beim ersten schreibenden Zugriff → Seitenfehler
+			Behandlung
+				*neue Kachel allokieren
+				*physisch kopieren
+				*neue kachel ohne Schreibschutz in Seitentabelle eintragen
+		Einsatz:
+			*UNIX fork
+			*Rücksetzpunkte
+			*gemeinsame Nutzungvon Daten/Programmen/Daten
+	
+	##Hauptspeicher
+		*verwaltet/beschafft/entzieht Kacheln
+		*Welche? → Seitenaustauschverfahren
+			Anhaltspunkte: referneced/mofified Attribute
+		Welche Kachel wird verdrängt?
+			*Anhaltspunkte für die Entscheidung:
+				referenced/modified Attribute von Kacheln aus Hardware/MMU
+			*optimal
+				Die Seite verdrängen, die am längsten nicht benötigt wird
+			*Annäherung durch "Lokalitätsprinzip"
+		FIFO
+			Verdränge älteste Seite
+				dh Inhalt der Kachel, die schon am längsten ihren jetzigen Inhalt hat
+			Vorteil	
+				*keine Informationen über tatsächliches Referenzverhalten nötig
+				*einfach implementierbar
+			Nachteile
+				*ignoriert Lokalitätsverhalten
+				*BELADY's Anomalie
+		LRU: Least Recently Used
+			Verdränge am längsten nicht genutzte Seite
+			Vorteil
+				*Gute Näherung für pptimalen Algorithmus(Lokalität)
+			Nachteil
+				*aufwendige Realisierung
+				*jeder Speicherzugriff müsste berücksichtigt werden
+					HW-Unterstützung wird benötigt
+				*Annäherungen per Software
+		LRU Annäherung: CLOCK	//Folie 81 und Aus der Übung bekannt
+		LRU Annäherung: Aging
+			*Kachel mit ältestem Inhalt wird verdrängt
+			*bessere Näherung: Statt "0" "1" → feineres Altersraster
+			*Analogie: Geburtsjahr
+				niedrige Zahl → hohes Altersraster
+			//Folien 83-89
+		Prozesslokaler/Globaler Seitenaustausch
+			*Seitenaustausch global für alle Prozesse Problem:
+				"Trashing" falls zu viele Prozesse
+			*Seitenaustausch prozesslokal
+				(Zuteilung von Hauptspeicher an Prozesse)
+			*Problem:
+				Ermittlung der Anzahl benötigter Kacheln
+				→Arbeitsmengen modell
+			//Auch aus einer Übung bekannt. Folie 90 mit Beispiel?!
+		Arbeitsmengenmodell
+			Betrachtung der Seitenreferenzfolge eines Prozesses durch ein "Fenster"
+				der Länge T
+			*Arbeitsmenge w(t,T) zum Zeitpunkt t, bzgl. T:
+				Menge der im Intervall [t-T,t] referenzierten Seiten
+			Erfahrung
+				*max(Z(T)): theoreitsch mögliche Maximalzahl von benutzten Seiten in T
+					Zeiteinheiten
+				* ‾|w(t, T)|‾ << max(Z(T))
+			Vorgehen
+				*Bestimmung der Arbeitsmenge
+				*für aktive und bereite Prozesse muss sich mindestens die Arbeitsmenge 
+					im Speicher befinden
+				*Swapping, falls Kacheln fehlen
+				*Prepaging bei Wiedereinlagerung
+		Seitenfehlerrate
+			*Begrenzung der Anzahl von Prozessen und globalen Seitenaustausch
+			*Ermittlung der Kachelanzahl: abhängig von Seitenfehlerrate
+			//Grafik Folie 93
+		MISC:Seitengröße:
+			*Betriebssystem kann Seitengröße größer wählen als durch Hardware vorgegeben
+			*HW mit mehreren Seitengrößen (Itanium, ARM)
+			Entscheidungsgesichtspunkte:
+				*Zeit für Seiteneinlagerung
+				*Verschnitt durch nicht voll genutzte Seiten
+				*Lokalität von Zugriffen
+				*TLB-Ausnutzung besser bei größeren Seiten
+	
+	##Speicherobjekte
+			*Text-(Code-),Daten-,...-Segment eines Prozesses
+			*Dateien
+			*Grafikspeicher
+			*BS-Datenstrukturen
+				THread Contorl Blocks, Seitentabellen
+			*Netzwerkobjekte
+		SPEICHEROBJEKTE UND REGIONEN // Folie 98-102
+		Regionen-Manager
+			Verwaltung der Adressraum-Struktur repräsentiert zB als verkettete Liste
+			Aufgabe bei Seitenfehler: Bestimmen von
+				*potentiellen Fehlerart
+					+Zugriff auf ungültigen Bereich (zB Pointerfehler)
+					+Rechteverletzung (zB. Schreiben in Code-Bereich)
+				*Speicherobjekte
+					+Seite innerhalb des Speicherobjektes
+					+Copy On Wrtie Fault
+	
+	##DAS ZUSAMMENSPIEL //Folie 104 - 125
+	
+	#CACHES //Folie 126 -132
