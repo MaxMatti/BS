@@ -429,25 +429,26 @@ abstürzt. Sind nach dem Neustart des Systems noch Korrekturen erforderlich und 
 
 **a)**
 
-
+4, 3, 5, 6
 
 **b)**
 
 | Block  | 0  |  1 | 2  | 3  | 4  | 5  | 6  | 7  | 8   | 9  | 10  |  11 |
 |:-:|---|---|---|---|---|---|---|---|---|---|---|---|
-| Typ  |   |   |   |   |   |   |   |   |   |   |   |   |
-| Inhalt  |   |   |   |   |   |   |   |   |   |   |   |   |
-|  Geändert |   |   |   |   |   |   |   |   |   |   |   |   |
+| Typ  | SB  | IA  | IB  | I  |  V | D  | D  | D  | D  |   |   |   |
+| Inhalt  | / : 0, frei: 3  | 0-2  | 0-8  | 0:4  1:5,6  2:7,8  | D1:1 D2:2  |  Daten | Daten  | Daten  |  Daten |   |   |   |
+|  Geändert |  x | x  |  x | x  | x  |   |   | x  | x  |   |   |   |
 
 
 
 **c)**
 
-
+Wenn der Strom ausfällt bevor die Allokations-Bitmaps geändert werden, sind die neu belegten Blöcke 
+nicht als belegt markiert und könnten später vom Betriebssystem neu beschrieben werden --> nicht behebbar
 
 **d)**
 
-
+D, IA IB, I, V, SB 
 
 
 
