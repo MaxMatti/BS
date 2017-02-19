@@ -1,0 +1,373 @@
+
+# Aufgabe 1 – Sicherheit (6 Punkte)
+
+a) Wie kann man auf einem Computer Zufall (Entropie) erzeugen? Nennen Sie zwei Möglichkeiten! 2P
+
+b) Nennen Sie einen prinzipiellen Vorteil von asymmetrischen gegenüber symmetrischen Verschlüsselungsverfahren! 1P
+
+c) Kann der folgende Modul Bestandteil eines sicheren RSA-Schlüssels sein? Begründen Sie! n = 0x2D16E6ADE5C 1P
+
+d) Einige Endgeräte haben schlechte Entropiequellen. Was bedeutet es für die Sicherheit von RSA, wenn zwei Teilnehmer unbeabsichtigt einen gleichen Faktor wählen? 2P
+
+
+## Lösung
+
+a) 
+
+* Pseudo Random Functions (PRF)
+```
+F: K × X --> Y
+on "domain" X and "range" K, with "efficient" algorithm to evaluate F(k,x)
+```
+
+* Pseudo Random Permutation (PRP)
+```
+Permutation   E: K × X --> X
+has efficient deterministic algorithm to evaluate E(k,x) and
+efficient inversion algorithm D = E^-1
+(A permutation π is a bijective function from a domain to itself: π: X --> X)
+```
+
+b)
+
+c) 
+
+d)
+
+-----------------------------------
+
+# Aufgabe 2 - Unix (5 Punkte)
+
+Ein UNIX-Prozeß führt folgenden Code aus:
+
+```
+int fd1 = open("datei1.txt", O_RDWR | O_CREAT); 
+int fd2 = open("datei2.txt", O_RDWR | O_CREAT);
+
+int pid1 = fork();
+
+if (pid1 == 0) { 
+	write(fd1, "abc", 3);
+	exit(0); 
+} 
+else 
+{ 
+	int pid2 = fork(); 
+	if (pid2 == 0) 
+	{ 
+		write(fd2, "abc", 3); 
+		exit(0); 
+	}
+	
+waitpid(pid1, NULL, 0); 
+write(fd1, "def", 3); 
+write(fd2, "def", 3);
+}
+```
+
+Die Dateien *datei1.txt* und *datei2.txt* existieren vor Programmausführung nicht, sondern werden durch das Öffnen angelegt. Alle Systemaufrufe laufen korrekt zu Ende, d.h. es treten keine Laufzeitfehler auf. Prozesse können zu einem beliebigen Zeitpunkt (auch während der Ausführung eines Systemaufrufs) unterbrochen werden. Welchen Inhalt können die Dateien *datei1.txt* und *datei2.txt* nach erfolgreicher Ausführung des Programms haben?
+
+
+## Lösung
+
+fd1: abc def def
+
+fd2: abc def def, def abc def
+
+------------------------------
+
+# Aufgabe 3 – Echtzeit (8 Punkte)
+
+In einem Echtzeitsystem isteine Menge von drei periodischen Tasks so einzuplanen, dass deren Jobs in jeder Periode erfolgreich beendet werden. Das Periodenende entspricht der Deadline. Die Parameter der Tasks beschreiben jeweils die Periode p und die konstante Bearbeitungszeit e der Jobs:
+
+T1 | T2 | T3 
+--- | --- | ---
+p1 = 5 e1 = 2 | p2 = 10 e2 = 3 | p3 = 4 e3 = 1
+
+Alle Tasks starten zum Zeitpunkt 0, können an beliebiger Stelle unterbrochen werden und sind unabhängig voneinander. Der Scheduling-Overhead werde vernachlässigt. Es stehe genau **ein** Prozessor zur Verfügung. 
+
+a) Ist die gegebene Taskmenge mit statischen Prioritäten einplanbar? Wenn ja, geben Sie eine funktionierende Prioritätszuweisung an. 2P
+
+![Bild](img/realtime_empty.png "Aufgabe 3-1")
+
+
+b) Ist die gegebene Taskmenge mit dem Verfahren EDF einplanbar? Wenn ja, erklären Sie, welche Task zum Zeitpunkt 182 die höchste Priorität hat! 2P
+
+Um Energie zu sparen sollen mehrere langsamere Prozessoren anstelle eines schnellen Prozessors verwendet werden. Die sparsamen Prozessoren laufen mit halber Geschwindigkeit, so dass sich die Bearbeitungszeiten e der Jobs verdoppeln. Tasks sollen nicht zwischen Prozessoren migrieren, sondern werden fest zugeteilt.  
+Hinweis: Migration bezeichnet den Vorgang der Neu-Zuteilung von Tasks zu Prozessoren, sowohl zwischen einzelnen Jobs als auch innerhalb eines Jobs. 
+
+c) Wieviele der sparsamen Prozessoren sind minimal nötig, um die Taskmenge unter diesen Bedingungen einzuplanen? Belegen Sie Ihre Antwort! 2P
+
+d) Ändert sich diese minimale Prozessoranzahl, wenn Jobs während ihrer Laufzeit zwischen Prozessoren migrieren können? Der Migrations-Overhead werde vernachlässigt. Begründen Sie Ihre Antwort durch einen geeigneten Ablaufplan. 2P
+
+![Bild](img/realtime_empty.png "Aufgabe 3-2")
+
+## Lösung
+
+a)
+
+**Admission (Einplanbarkeit):**
+
+![Bild](img/auslastung.gif "Auslastung")
+
+n - Tasks  
+&eta; - Auslastungsgrad  
+t - Ausführungsszeit/Bearbeitungszeit  
+p - Periode
+
+
+![Bild](img/nie_einplanbar.gif "nie einplanbar")
+
+**Für statische Prioritäten (RMS - Rate Monitoring Scheduling):**
+
+* wenn Rate hoch --> Priorität hoch
+* Rate = 1 / p
+* optimal bzgl. Einplanbarkeit für statische Prioritäten
+
+![Bild](img/auslastung_rms.gif "Auslastung RMS")
+
+* wenn Formel nicht erfüllt --> keine Aussage möglich --> Ablaufplan notwendig
+
+Hier:
+
+&eta; = 0.95  
+![Bild](img/equation_rms.gif "Formel RMS")
+--> Keine Aussage möglich, Ablaufplan notwendig
+
+Prioritäten: T3 > T1 > T2
+
+![Bild](img/realtime_a.png "Aufgabe a)")
+
+**mit RMS einplanbar**
+
+b)
+
+**Für dynamische Prioritäten (EDF - Earliest Deadline First)**
+
+* nächste Deadline --> Priorität hoch
+* Aufwendiger als statische Prioritäten, optimal bzgl. Einplanbarkeit für Single-Prozessoren
+
+![Bild](img/auslastung_edf.gif "Auslastung EDF")
+
+Hier:
+
+0.95 &le; 1  --> **einplanbar mit EDF**
+
+c)
+
+d)
+
+
+-------------
+
+
+# Aufgabe 4 – Speicherverwaltung (3 Punkte)
+
+Ein System verwendet das Buddy-Verfahren zur Verwaltung des Speichers. Der freie Speicher umfasst 16 Seiten. Es werden nacheinander 5 Segmente (A–E), welche jeweils aus 1, 7, 3, 3 und 2 Seiten bestehen in den Speicher eingelagert. Kann eine Anfrage nicht erfüllt werden, so wird diese Anfrage ignoriert und mit der folgenden Anforderung fortgefahren. Geben Sie den Ablauf der Einlagerungen und die Lage der Segmente im Speicher an. Kennzeichnen Sie nicht erfüllbare Anfragen.
+
+## Lösung
+
+A:1
+
+|  A |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+B:7
+
+|  A |   |   |   |   |   |   |   |  B | B  | B  | B  | B  |  B |  B |   |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+C:3
+
+|  A |   |   |   |  C | C  | C  |   |  B | B  | B  | B  | B  |  B |  B |   |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+D:3
+
+Nicht erfüllbar
+
+E:2
+
+|  A |   |  E | E  |  C | C  | C  |   |  B | B  | B  | B  | B  |  B |  B |   |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+
+---------------
+
+# Aufgabe 5 – Speicherverwaltung (6 Punkte)
+
+Gegeben seien folgende Seitentabellen für eine Architektur mit einem 32 Bit großen virtuellen und physischen Adressraum. Die Seitengröße beträgt 4096 Byte. Es wird eine zweistuﬁge Abbildung mit jeweils 10 Bit pro Stufe verwendet.
+
+
+
+![Bild](img/memory1.png "Aufgabe 5-1")
+
+Die Abbildung zeigt ein Seitenverzeichnis und zwei Seitentabellen jeweils mit ihrer physische Adresse. Vor den einzelnen Seitentabellen-Einträgen steht der Index. Der Eintrag selber habe folgendes Format (wobei p für present und w für writable steht):
+
+![Bild](img/memory2.png "Aufgabe 5-2")
+
+
+a) Führen Sie für folgende Zugriffe die Adressumsetzung durch und geben Sie an, ob dabei ein Seitenfehler auftritt (fehlendes present oder writable Bit) oder anderenfalls die resultierende physische Adresse. Geben Sie bei den lesenden Zugriffen, sofern möglich, außerdem an welcher Wert gelesen wird. 4P 
+
+
+I. Lesen von 4 Byte von virtuell 0x000000FF
+
+
+II. Schreiben von 4 Byte an virtuell 0x00801012
+
+
+III. Schreiben von 4 Byte an virtuell 0xFFFFF556
+
+
+IV. Lesen von 4 Byte von virtuell 0x00402004
+
+
+b) Angenommen auch der Betriebssystemkern kann nicht direkt auf physische Adressen zugreifen, sondern muss ebenfalls virtuelle Adressen benutzen. An welche virtuelle Adresse muss er schreiben um Eintrag 0x0 in der Seitentabelle unten rechts zu ändern? 2P
+
+
+
+## Lösung
+
+**a)**  
+
+* Eintrag --> 0x12341234 (1 Hex-Ziffer = 4 Bit --> 32 Bit)
+* letzte 12 Bit (3 Hex-Ziffern) = ungenutzt, write-Bit, present-Bit (0011 = w und p gesetzt, 0001 = nur p gesetzt)
+* erste 10 Bit = Zeile in PageDirectory --> führt zur betreffenden PageTable
+* zweite 10 Bit = Zeile in PageTable --> führt zur gesuchten Adresse 
+* letzte 12 Bit (3 Hex-Ziffern) = Offset, kommt ans Ende des Ergebnisses
+
+I.
+
+lesen auf 0x000000FF --> Offset = 0FF  
+Rest = 0x00000 = 00000000000000000000 (Binär)  
+erste 10 Bit = 0, zweite 10 Bit = 0
+PD-Zeile = 0  
+--> 0x00000000 --> letzte Ziffer 0 (Hex) = 0000 (Binär) --> kein write-Bit und present-Bit gesetzt --> **PageFault**!
+
+
+II.
+
+schreiben auf 0x00801012 --> Offset = 012  
+Rest = 0x00801 = 00000000100000000001  
+erste 10 Bit = 0000000010 = **2**, zweite 10 Bit = 0000000001 = **1**  
+PD-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> PageTable 0x3000  
+PT-Zeile = 1 --> 0x00010001 --> 001 => w-Bit nicht gesetzt, Schreiben nicht möglich --> **PageFault**!
+ 
+
+III.
+
+Schreiben auf 0xFFFFF556 --> Offset = 556  
+Rest = 0xFFFFF = 11111111111111111111  
+erste 10 Bit = 1111111111 = **3FF**, zweite 10 Bit = 1111111111 = **3FF**  
+PD-Zeile = 3FF --> 0x00004003 (003 --> w/p gesetzt) --> PageTable 0x4000  
+PT-Zeile = 3FF --> 0x00013003 (003 --> w/p gesetzt) --> Schreiben erlaubt --> Ergebnis 0x00013 + Offset  
+Ergebnis = **0x13556**
+
+IV.
+
+Lesen auf 0x00402004 --> Offset = 004  
+Rest = 0x 00402 = 00000000010000000010  
+erste 10 Bit = 0000000001 = **1**, zweite 10 Bit = 0000000010 = **2**  
+PD-Zeile = 1 --> 0x00002003 (003 --> w/p gesetzt) --> PageTable 0x2000 (wieder PageDirectory)  
+PT-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> present (lesen geht) --> 0x00003 + Offset  
+Ergebnis = **0x00003004**
+
+
+----------------------------------------
+
+
+# Aufgabe 6 – Synchronisation (6 Punkte)
+
+
+Um den Datentyp einer Menge zu implementieren, soll ein Binärbaum verwendet werden.
+ Mehrere Threads können parallel Elemente in diesen Baum einfügen (insert()). Weiterhin kann auf die Existenz 
+ eines Eintrags geprüft werden (contains()). Aus Gründen der Skalierbarkeit soll für diese
+ Operationen kein globales Lock für den kompletten Baum verwendet werden, sondern einzelne Locks 
+ in den jeweiligen Knoten, die dabei folgende Struktur haben:
+
+![Bild](img/sync.png "Aufgabe 6")
+
+
+```
+insert (Node * node, int value) 
+{ 
+	while (1) { 
+		node->lock(); 
+		if (value < node->value) { 
+			node->unlock();
+			if (node->left) { 
+				node = node->left; 
+			} else { 
+				node->left = new Node (value); 
+				return; 
+			} 
+		} else if (value > node->value) { 
+				// similar for right path 
+		} else { 
+			// node->value == value --> do nothing 
+			node->unlock(); 
+			return; 
+		} 
+	}
+```
+
+a) Geben Sie für den Aufruf insert(root, 8) auf den obigen Baum alle Semaphore-Operationen in 
+entsprechender zeitlicher Reihenfolge in folgendem Format an:  
+Knotennummer : lock/unlock (z.B. 6 : lock oder 5 : unlock) (2P)  
+
+
+b) Welches Problem kann auftreten, wenn zwei Threads gleichzeitig die Werte 1 und 2 in den Baum 
+eintragen möchten? Verwenden Sie die gleiche Notation wie aus Aufgabe a) und zeigen Sie, wie es 
+zu einem inkonsistenten Baum kommen kann. (2P)
+
+
+c) Geben Sie eine korrekte Implementierung von insert() an, die weiterhin ohne globales 
+Lock arbeitet. Es genügt, wenn Sie nur einen der beiden if-then-else-Zweige betrachten, 
+da sich der andere analog verhält. (2P) 
+
+
+## Lösung
+
+**a)**  
+
+`insert(root, 8)`
+
+root(5) : lock, root(5) : unlock, 7 : lock, 7 : unlock, 9 : lock, 9 : unlock
+
+
+**b)**
+
+Problem:  
+5 : lock, 5 : unlock, 3 : lock, 3 : unlock, Interrupt, 3 : lock, 3 : unlock
+
+--> könnte entweder 2, dann 1 anhängen, oder erst 1, dann 2 anhängen
+
+
+**c)**
+
+```
+insert (Node * node, int value) 
+{ 
+while (1) {
+		node->lock(); 
+		if (value < node->value) { 
+			if (node->left) { 
+				node = node->left; 
+				node->unlock();
+			} else { 
+				node->left = new Node (value);
+				node->unlock();				
+				return; 
+			} 
+		} else if (value > node->value) { 
+				// similar for right path 
+		} else { 
+			// node->value == value --> do nothing 
+			node->unlock(); 
+			return; 
+		} 
+	}
+```
+
+
+
