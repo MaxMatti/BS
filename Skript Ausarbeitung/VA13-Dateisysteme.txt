@@ -80,3 +80,75 @@ Ein einfaches Dateisystem
 			*Namens-Auflösung:
 				von einem Ausgangskontext ausgehend wird jeder Teilname in seinem
 				Kontext Interpretiert
+	Mehrere Namen für eine Datei: Harte Links
+		Indentifikatoren in mehrernen Verzeichnissen
+		Limitation: Gültigkeit Identifkatoren über Rechnergrenzen hinweg?
+		Zyklen!!!11!1!einself //Deswegen meist nicht für Verzeichnisse
+		
+		Backup ist ein Beispiel für Harte Links.
+			Es wird alles Hart verlinkt was sich nicht ändert.
+			
+	Mehrere Namen fpr ein Objekt: Weiche Links
+		Symbolische Links // Sozusagen Verknüpfungen
+		Namen als Objekte
+	
+	Verzeichnisse
+		Implementierung und Zugriff analog normale Datei mit:
+			*interner Struktur
+			*speziellen Opersationen
+				+opendir/closedir
+				+readdir
+				+lookup
+				+rename
+	Ablauf eines Dateizugriffs
+		Namensdinste:
+			Symbolische Namen → Identifkatoren
+			Zugriffe auf (Daten in) Dateien:
+				*häufig open(Zugriff)  close
+				*Zugriff über
+					+Kopieren aus Datei in Adressraum und zurück:
+						read/wirte(Datei, Position in Datei, Länge, Adresse, im AR)
+						keine Ausrichtung der Adressen notwendig
+						seek-Operation ersetzt "Position in Datei" als Parameter
+					+Einblenden in Adressraum:
+						map(Datei, Adresse in Adressraum, Offset, Länge)
+						dann Zugriff über normale Maschinen-Instruktionen
+						Offset und Adresse müssen an Seitengrenzen ausgerichtet seine
+		Zugriff mittels Einblendung
+			mmap(Datei, Adresse, Länge, Offset)
+			*bei Seitenfehler:
+				+Zugriff auf Datei über Seitenfehlerbehandlung
+				+dann Zugriff über normale HW-instruktionen
+			*"Pager" muss Struktur der Dateiimplementierung kennen!
+	Ablauf eines "write" Dateizugriffs (UNIX)
+		fd = open(Dateipfad und name, RW, ...)
+			Pfadname → i-node number (Namensauflösung)
+			i-node number → fd
+		seek(fd, position)
+		write(fd,address,length)
+		
+		Beteiligte Datenstrukturen(des Dateisystems)
+			*Prozesssteuerblock: current directory, Filedescriptor fd
+			*Verzeichnisse
+			*Tabelle geöffneter Dateien, pro Datei:
+				+file pinter(gegenwärtige Schreib-/Leseposition),...
+				+i-node number
+			*Dateitabelle auf Platte (Tabelle der I-Knoten)
+				+Index in dieser Tabelle(i-node number) identifiziert Datei
+			*fur alle (auch nicht geöffnete) Dateien: i-node
+				+Allokation (Zuordnung von Dateiblöcken zu Platten blöcken)
+				+Attribute
+			*Puffer-Verwaltung
+			
+	#Pufferverwaltung und Ablauf read/write Folie 43 -50
+	
+	Gegenüberstellung: Read/write vs Map
+		read/wirte
+			*Kopie vor jeder Manipulation
+			*mehere Prozesse können sich per read eine Kopie holen und dann den
+				vom anderen Prozess vorher geschriebenen Wert überschreiben
+		mmap
+			*Einsparen von Kopieroperartionen
+			*Synchronisation wie bei gemeinsamen Speicher
+			
+				
