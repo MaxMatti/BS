@@ -1,0 +1,230 @@
+Robutste Dateisysteme
+	#Dateisysteme
+		Dateisysteme: Abbildung von Objekten (Dateien) auf Speicherorte(Blöcke)
+		Abbildung beschrieben durch Metadaten:
+			*Hierarchie von Dateiverzeichnissen: Einträge bilden Dateinamen auf
+				Inodes ab
+			*Inodes mit Attributen und Zeigern
+			*Zeiger bennen Blöcke mit Dateiinhalten
+			*Satus von Inodes, Blöcke mit Dateiinhalten
+			*Satus von Inodes, Blöcken: frei/belegt
+			*Metadaten ebenfalls in Blöcken gespeichert
+		Lesen und Schreiben von Dateisystemestrukturen erfolgt blockweise
+	
+	#Konsistenzproblem
+		*Änderung an Dateisystem in Buffer Cache
+		*Abhängigkeiten zwischen Teiländerungen
+			+Metadaten und Daeiinhalte
+			+Innerhalb von Metadaten
+		*Abhängigkeiten auch zwischen Blöcken:
+			+Problem: Schreiben mehrerer Blöcke nicht atomar (oft nur einzelne Sektoren)
+			+Unterbrechun (zB. Stromausfall) beim Schreiben abhängiger Blöcke 
+				→ Inkonsistenzen
+	#Inkonsistenzen
+		Kritisch: Verlust bereits persistenter Daten
+			*Zeiger auf falsche Inodes oder Blöcke aus gelöschten/anderen Dateien
+			*Belegter Block/Inode als frei markiert
+			*Wert von Referenzzähler in Inode zu niedrig
+		Unkritisch: temporäre Ressourcenlecks
+			*Freier Block/Inode als belegt markiert
+			*Refernzzähler in Inode zu hoch
+			*Datenblock oder Inode geschrieben, aber Blockzeiger (oder 
+				Verzeichniseintrag) nicht
+	#Synchrones schreiben
+		IDEE: Modifizierte Blöcke sofort in sicherer Reihenfolge schreiben:
+			*Neue Blöcke: zunächst Allokation in Bitmap-Block schreiben, dann neuen 
+				Block
+			*Erst Block schreiben, dann Zeiger drauf
+		Schreiben von Blöcken erfolgt synchron
+			*Metadatenblöcke: Warten auf Rückmeldung von Speichergerät(Write Barrier)
+			*Datenblöcke: Warten bei letztem Block reicht
+		Beispiel für sicherere Reihenfolge auf Folie 16
+	#Konsistenzregeln
+		Grundlegende Regeln für Konsistenz
+			*Gültige Zeiger:	 Setze keinen Zeiger auf eine Struktur, bevor diese
+				initialisiert wurde
+			*Wiederverwendung:	Verwende keine Ressource erneut, bevor alle vorherigen
+				Zeiger darauf invalidiert wurden
+			*Erreichbarkeit:	Invalidiere niemals den alten Zeiger auf eine gülitge
+				Ressource, bevor der neue Zeiger gesetzt wurde
+		Konsistenz nach Absturz
+			*Keine Zeiger auf nicht initialisierte Metadaten
+			*Ressourcen-Lecks möglich: Inodes, Blöcke
+			*Zu hohe Werte in Referenzzählern
+			*CLEAN-Flag in Superblock nicht gesetzt
+		Korrektur: Dateisystem-Check (fsck)
+		Schlechte Performance:
+			*Nach Absturz: (sehr) zeitaufwändiger fsck-Lauf
+			*Pro Operation: Mehrere Write Barriers(teuer)
+	#Hardware-Realitäten
+		Command-Queuing:
+			*Mehrere Lese-Schreib-aufträge können an Festplatte gesendet werden
+			*Contoller entscheidet selbst über optimale Reihenfolge
+			*Keine Garantie für Reihenfolge persistenter Speicherung (aber
+				Benachrichtigung)
+		Problematische Sicherstellung garantierter Schreibreihenfolge:
+			*Ältere Spezifikationen wie Serial-ATA kennen keine Write Barriers
+				→ Speichergerät darf ausstehende Schreiboperationen belieb umsortieren
+			*Garantierte Persistenz eines Blocks _vor_ einem anderen nur nach explizitem
+				Zurückschreiben des internen Caches (FLUSH-Kommando)
+			*Vorteile von Command-Queuing gehen verloren
+		Neue Schnittstellen wie NVMe beheben dieses Problem
+	#Soft Updates
+		Idee: Puffern, gemeinsames Schreiben
+			*viele Änderungen zunächst im Buffer Cache
+			*Bei Zurückschreiben der Änderungen _alle_ Abhängigkeiten zwischen Blöcken
+				beachten
+		Umsetzung
+			Dependency-Strukturen für jeden Block
+				*Metadaten(Verzeichniseintrag → Inode)
+				*Daten(Inode/Indirect-Block → Datenblock)
+			Problem: Zyklen in Blockabhängikeiten
+		Abhängigkeitszyklen auf Folie 22f
+		Abhängigkeiten
+			Zurückschreiben von Blöcken jederzeit
+			Soft-Updates-Code inspiert Dependency-Strukturen vor Schreiboperationen
+				*Konsistente Änderungen können persistent gemacht werden und werden 
+					übernommen
+				*Änderungen mir nicht erfüllten Abhängigkeiten werden temporär 
+					zurückgerollt
+				*Nach Schreiben der konsistenten Version des Blocks werden Änderungen
+					wiederholt
+		Zustands-Flags
+			Attached:
+				*Puffer wird im Moment nicht geschrieben
+				*Bei Zurückrollen: Attached-Flag wird gelöscht, nach Schreiben des Blocks
+					werden Änderungen im Block wiederholt und Flag neu gesetzt
+			Depcomplete:
+				*Änderung sicher, kein Zurückrollen notwendig
+			Complete:
+				*Änderung wurde auf Platte geschrieben
+			Struktur wird nur Freigegeben, falls alle Flags gesetzt sind
+		Eigenschaften
+			Nach Absturz: unkritische Inkonsistenzen
+				*Freie Inodes/Blöcke als belegt markiert
+				*Wert des Referenzzählers in Inodes zu hoch
+				*Alter und neuer Dateiname, falls rename Operation unterbrochen
+			Korrektur:
+				*fsck-Lauf zu Ressourcenfreigabe
+				*FFS: fsck im Hintergrund, wenn eingehängt
+			Gute Performance:
+				*Nur wenige Write Barriers
+				*fsck-Lauf im Hintergrund
+			Hohe Komplexität
+				*Tief verankert in Implementierung, stark abhängig von Dateisystem-Layout
+				*Aufwändgies Verfolgen von Abhängigkeiten
+				*Rollback und Rollforward von Änderungen
+	#Journaling
+		Idee: Write-ahead Log (Journal)
+			1) Protokollierung _geplanter_ Änderungen an Dateisystemstrukturen in Journal
+			2) Journal- Transaktion als komplett markieren
+			3) Änderungen "in-place" in verteilte Dateisystemblöcke schreiben
+				(Checkpointing)
+			4) Transaktion in Journal freigeben
+		Nach Absturz:	in Journal protokollierte Transaktionen erneut "in-place"
+			schreiben
+		//EINIGE JOURNAL ABSTÜRZE
+		Eigenschaften
+			Optimiertes Schreiben:
+				*Lineares Schreiben in Journal
+				*Checkpointing mit minimaler Anzahl an Seek-Operationen möglich
+			Minimierung von Write Barriers
+				*Komplettierung einer Transaktion (Kann sehr groß sein: "Compound
+					Transaction")
+				*Nach Checkpointing, mit Komplettierung nachfolgender Transaktionen
+					kombinierbar
+			Leseleistung: unbeeinflusst von Journaling
+		Implementierung	
+			Speicherort für Journal:
+				*Fester Bereich von Blöcken (Reiserfs)
+				*Versteckte Datei, vorallokiert (Ext3, NTFS)
+			Granularität der Journal-Einträge:
+				*Ganze Metadatenblöcke (Ext3, Reiserfs)
+					+Nur "sichere" Versionen von Metadatenblöcke
+					+Problemstellung ähnlich wie bei Soft Updates
+				*Einzelne Metadaten-Updates(NTFS)
+		Journal-Mode(Ext3)
+			Write-back Journaling:
+				*Nur Metadaten in Journal
+				*Datenblöcke "irgendwann" geschrieben
+				*Nicht initialisierte Dateiinhalte möglich
+			Ordered Journaling [Voreinstellung]
+				*Erst Daten "in-place" schreiben, dann zugehörige Transaktion in 
+					Journal markieren
+				*Keine nicht initialisierten Dateiinhalte
+			Data Journaling
+				*Daten + Metadaten in Journal
+	#Log-strukturiert
+		Idee: gesamtes Dateisystem als Log
+			*Daten und Metadaten linear geschrieben
+			*Kein Überschreiben, neue Blockversionen werden an Log angehängt
+			*Jeweils neuste Version aller Blöcke stellen aktuellen Dateisystemzustand dar
+		Interessante Eigenschaften:
+			*Log enthält alte Zustände des Dateisystems
+			*Mehrere Snapshots gleizeitig möglich
+		Aufbau des Logs
+			*Speichermedium in Segmente unterteilt
+			*Enthalten Daten- und Metadatenblöcke
+			*Summary-Blöcke beschreiben Blocktypen
+				+Datei-/Verzeichnisblöcke:(Inode, Block#)
+				+Inode-Blöcke: Neue/modifizierte Inodes
+				+Inode-Map-Blöcke: Inode-Position in Log
+			*Inode-Map entkoppelt Inode-Zeiger in Verzeichnissen von pysischer Position
+		Checkpoints
+			Alle Daten und Metadaten im Log
+				kompletter Scan bei jedem Start zu teuer
+			Besser:
+				regelmäßig Zwischenstand bei aktuellsten Metadaten sichern
+			2 Checkpoint-Areas  an fester Position:
+				*Konsistente Version aller Blöcke aus Inode-Map(+Segment-Usage-Tabelle)
+				*Zeitstempel + Zeiger auf letztes Segment
+				*Markierung/Prüfsumme um Konsistenz bzw. Vollständigkeit zu erkennen
+		Mounten (auch nach Absturz)
+			1. Wähle aktuellsten konsistente Checkpoint-Area
+			2. Reinitialisiere Inode-Map in Kernelspeicher
+			3. Bestimme Position des letzten vor Checkpoint geschriebenen Segments
+			4. Roll-forward ab letztem Segment
+			5. Aktuelles Dateisystem wiederhergestellt
+		Garbage-Collection
+			Das Problem ist, der Log darf nicht unendlich wachsen
+			1.Lösung: alte Blöcke einzeln freigeben.
+				+Freigabe ist einfach und schnell
+				-Fragmentierung nimmt immer mehr zu
+			2.Lösung: komplette Segmente freigeben
+				+Fragmentierung nimmt nicht zu
+				-Noch gültige Blöcke im Segment müssen in neues Segment gerettet werden
+			Die 2. Lösung wird in der Praxis nur verwendet (in zB. LFS[3])
+			
+			*Cleaner-Prozess sucht teilweise belegte Segmente im Hintergrund
+			*Wird automaitsch aktiv, wenn Anzahl freier Segmente Schwellwert
+				unterschreitet
+			Identifkation veralteter Blöcke:
+				*Suche Inode oder Indirect-Block, der auf untersuchten Böock zeigt
+				*Kein Zeiger gefunden? → Freigabe möglich
+	#Copy-on-write / Shadow Paging
+		Idee: Ähnlich zu Log-strukturierten Dateisystem: Überschreibe niemals
+		*gesamtes Dateisystem als B+-Baum
+		*Änderungen an Dateisystemstrukturen
+			+Copy-on-write: ModifizierteVersion eines Knoten(Block) an freie Position
+				schreiben
+			+Anpassung der Zeiger in Eltern-Knoten → Copy-on-write auch für Eltern,
+				bis zur Wurzel
+		*Aktualisierung des Wurzelzeigers: schaltet atomar auf neuen Dateisystemzustand
+			um
+			
+Opimierungen
+	#Sehr kleine Dateien(kleiner als Blockgröße)
+		*Inline Data: Speicherung weniger Bytes direkt in Inode
+		*Tail-Packing: viele Dateireste in einem Block
+	#Sehr große Dateien:
+		Problem unnötig viele Blockzeiger
+			*Zeiger auf direkt aufeinander folgende Blöcke
+			*Hoher Speicherbedarf, Indirect-Blocks
+		Lösung: Extents
+	#Extents
+		aufeinander folgende Blöcke
+		*LBN: Logische Position innerhalb der Datei
+		*PBN: Physische Blocknummer des 1.Blocks
+		*N: Anzahl Blöcke
+		Vorteil: Wenige Extent-Deskriptoren anstatt vieler Blockzeiger
+		//Folie 59 als Beispiel
