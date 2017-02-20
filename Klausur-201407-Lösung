@@ -75,8 +75,8 @@ Sie einen möglichen dabei entstehenden Ablaufplan der Jobs J an.  2 P
 d) Wie ist die durchschnittliche Verweilzeit aller Jobs in Ihrem bei c) gefundenen Ablaufplan? 1 P
 
 
-e) Gibt es unter Berucksichtigung der in c) zu Gesamtbearbeitungszeit und Prozessorzahl genannten Bedingungen
-auch einplanbare Ablaufplane mit anderer durchschnittlicher Job-Verweilzeit? Begr ünden Sie Ihre Antwort!  1 P
+e) Gibt es unter Berücksichtigung der in c) zu Gesamtbearbeitungszeit und Prozessorzahl genannten Bedingungen
+auch einplanbare Ablaufpläne mit anderer durchschnittlicher Job-Verweilzeit? Begründen Sie Ihre Antwort!  1 P
 
 
 
@@ -115,9 +115,19 @@ d)
 * hier: 
   - t&#772;<sub>w</sub> = 0.25
   - t&#772;<sub>b</sub> = (1 + 2 + 3 + 4) / 4 = 2.5 
-  - t&#772;<sub>v</sub> = 2.75
+  - **t&#772;<sub>v</sub> = 2.75**
 
 
+e) 
+
+|  |  |  |  |  |
+| --- | --- | --- | --- | --- |
+| 1 | B | B | B | B |
+| 2 | C | C | C |   |
+| 3 | D | D | A |   |
+
+* hätte t&#772;<sub>w</sub> = 0.5
+* daher t&#772;<sub>v</sub> = 3 möglich, bei gleicher Gesamtbearbeitungszeit
 
 
 ------------------------------
