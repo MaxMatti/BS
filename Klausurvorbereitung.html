@@ -11,7 +11,7 @@
 # Sicherheit
 
 ##Safety und Security:
-###Safety:	
+###Safety:
 * Schutz vor Schäden durch Fehlfunktionen von IT-Systemen
 * technisches Versagen: Alterung, Stromausfall
 * Menschliches Versagen: Dummheit, Fahrlässigkeit, mangelnde Ausbildung
@@ -20,7 +20,7 @@
 → Schutz vor einem IT-System, bedroht durch Fehler, Ausfälle
 
 
-###Security: 
+###Security:
 * Schutz vor Schäden durch zielgerichtete Angriffe auf IT-Systeme
 * Wirtschaftsspionage, Betrug, Erpressung, Vandalismus
 
@@ -36,22 +36,22 @@
    - Übertragene und gespeicherte Daten dürfen nur legitimierten Empfängern zugänglich sein
    - Vertraulichkeit der Identität wird als Anonymität bezeichnet
 
-   
+
 * Integrität (**I**ntegrity)
   - Veränderungen an Daten müssen erkannt werden
   - (Identifikation des Absenders)
 
-  
+
 * Verfügbarkeit (**A**vailability)
   - Informationen und Dienste sollen berechtigten Nutzern in angemessener Frist zugänglich sein
 
-  
+
 Ebenfalls:
 
 * Zurechenbarkeit (Accountability)
   - verantwortliche Partei für eine Operation soll identifizierbar sein
 
-  
+
 * Kontrollierter Zugriff (Controlled Access)
   - nur autorisierte Parteien sollen in der Lage sein, auf Dienste oder Informationen zuzugreifen
 
@@ -123,11 +123,11 @@ __Schadenspotential:__
 
 # Threads
 
-**"fair"**: 
+**"fair"**:
 
 * jeder Thread erhält “angemessenen” Anteil CPU-Zeit
 * kein Thread darf CPU für sich allein beanspruchen
-* Wohlverhalten von Threads darf bei der Implementierung von Threads keine Voraussetzung sein 
+* Wohlverhalten von Threads darf bei der Implementierung von Threads keine Voraussetzung sein
 
 #### Definition Thread
 
@@ -143,7 +143,7 @@ __Schadenspotential:__
   - Thread wartet auf ein Ereignis um weiterarbeiten zu können
 * Bereit
   - nicht aktiv aber auch nicht blockiert
-  
+
 ##### Mögliche Übergänge
 
 * Aktiv --> Blockiert
@@ -155,8 +155,8 @@ __Schadenspotential:__
   - Betriebsmittel stehen zur Verfügung
 * Bereit --> Aktiv
   - Es wird zu dem Thread gewechselt
-  
-  
+
+
 #### Betriebsmittel eines Threads
 
 * Kern-Stack
@@ -209,9 +209,9 @@ Den Programmteil, in dem auf gemeinsamen Speicher gearbeitet wird, nennt man Kri
 
 **Konsequenz**:
 
-* wird nur in BS für 1 CPU Rechner genutzt und da nur im BS-Kern.		
+* wird nur in BS für 1 CPU Rechner genutzt und da nur im BS-Kern.
 
-#### Implementierung mit HW Unterstützung // FOLIE 73 
+#### Implementierung mit HW Unterstützung // FOLIE 73
 
 **Vorteil**:
 
@@ -246,19 +246,19 @@ Den Programmteil, in dem auf gemeinsamen Speicher gearbeitet wird, nennt man Kri
 #### Semaphore
 
 ```
-class SemaphoreT {   
-	
-	public:  
-	
-	SemaphoreT(int howMany);  
-	//Konstruktor  
-	
-	void down();  
-	//P: passeren = betreten  
-	
-	void up();  
-	//V: verlaten = verlassen  
-} 
+class SemaphoreT {
+
+	public:
+
+	SemaphoreT(int howMany);
+	//Konstruktor
+
+	void down();
+	//P: passeren = betreten
+
+	void up();
+	//V: verlaten = verlassen
+}
 ```
 
 > A mutex is used for mutual exclusion. A region of code that begins with a call to acquire a mutex, and ends with a call to release the same mutex, can only have one thread in the code at a time.
@@ -308,7 +308,7 @@ Semantik z:
 # Verklemmungen
 
 Eine Menge von Prozessen heißt verklemmt, wenn jeder Prozess dieser Menge auf ein
-Ereignis wartet, das nur von einem anderen Prozess dieser Menge ausgelöst 
+Ereignis wartet, das nur von einem anderen Prozess dieser Menge ausgelöst
 werden kann.
 
 ## Charakterisierende Bedingungen
@@ -321,28 +321,28 @@ werden kann.
 4. zyklische Wartesituation
 
 * Hinreichend ist:
-  - (1) AND (2) AND (3) AND (4) 
+  - (1) AND (2) AND (3) AND (4)
 
 ## Gegenmaßnahmen:
 
 * Gegenseitiger Ausschluss (Mutual Exclucion)
   - z.B. Spooling -> nur ein Prozess (Daemon) erhält BM
 
-  
+
 * Nachfordern
   - Postulat: alle BM müssen bei Start angefordert werden
   - Freigabe aller BM bei Neuforderung
   - Problem: Dynamik, BM-Auslastung
 
-  
+
 * Nicht-Verdrängbarkeit
   - bei logischen Betriebsmitteln (Transaktionen)
 
-  
+
 * Zyklische Wartebedingung
   - sorgfältige Betriebsmittelzuteilung (BMZ)
 
-  
+
 ## sorgfältige BMZ
 
 * Postulat:
@@ -352,13 +352,13 @@ werden kann.
 ## Bank-Algorithmus für 1 Betriebsmittel-Typ
 
 * Gegeben:
-  - Prozesssystem P 
+  - Prozesssystem P
   - maximale Anzahl G von BM-Exemplaren
   - maximale Anzahl KP von BM-Exemplaren, die Prozess P<sub>i</sub> &isin;P im Laufe seiner Existenz benötigt mit KP &le; G
 * Zustand
   - Vektor der momentan den Prozessen zugeteilten BM-Exemplare
 
-  
+
 Ein Zustand heißt *sicher*, wenn
 
 * keine Verklemmung vorliegt
@@ -366,8 +366,8 @@ Ein Zustand heißt *sicher*, wenn
 
 Andernfalls heißt der Zustand *unsicher*.
 
-Idee des Bank-Algorithmus:  
-Zuteilung nur vornehmen, wenn Nachfolgezustand immer noch sicher ist, andernfalls muss Prozess warten.  
+Idee des Bank-Algorithmus:
+Zuteilung nur vornehmen, wenn Nachfolgezustand immer noch sicher ist, andernfalls muss Prozess warten.
 
 * Probleme:
   - Komplexität: O(2n) n: Anzahl der Prozessen
@@ -377,15 +377,15 @@ Zuteilung nur vornehmen, wenn Nachfolgezustand immer noch sicher ist, andernfall
 
 ## Entdecken und Beseitigen
 
-Symptom:  
+Symptom:
 Operation dauert wesentlich länger als erwartet, z.B. TIMEOUT als
 zusätzlicher Parameter blockierender Operationen:
 
-Diagnose:  
+Diagnose:
 Feststellen ob zyklische Wartebedingung vorliegt
 
-Therapie: 
- 
+Therapie:
+
 * Verdrängung von Betriebsmitteln
 * Entfernen von Prozessen
 * Zurücksetzen
@@ -408,11 +408,11 @@ Falls das vermeiden zu aufwendig ist, müssen Verklemmungen erkannt und behoben 
 
 ## Scheduling
 
-#### Begriff  
+#### Begriff
 Vorgehensweise zur **Einplanung** von Aufgaben, die durch ein aktives Betriebsmittel zu bearbeiten sind
 
-**Entscheidungsstrategien** legen die Reihenfolge fest, in der sich Prozesse 
-um den Prozessor bewerben bzw. in der sie aus einer Warteschlange 
+**Entscheidungsstrategien** legen die Reihenfolge fest, in der sich Prozesse
+um den Prozessor bewerben bzw. in der sie aus einer Warteschlange
 ausgewählt werden.
 
 Aufgabe der Schedulingtheorie ist es solche Strategien zu entwickeln und zu bewerten
@@ -496,10 +496,10 @@ nötig.
 * *m* identische Prozessoren. Enumeration: Aufwand O (e<sup>jobanzahl</sup>)
 * **Optimalitätskriterium t<sub>g</sub> &rarr; Min!**
   - R bel.: polynomialer Algorithmus nur für m = 2, t<sub>i</sub> = const. bekannt
-  - R = &empty;:	
+  - R = &empty;:
     + m = 1 	trivial
     + m &gt; 1: Approximation
-	+ **LPT** "Largest Processing Time"
+	     + **LPT** "Largest Processing Time"
 
 
 * **Optimalitätskriterium t&#772;<sub>v</sub> &rarr; Min!**
@@ -518,15 +518,15 @@ nötig.
   - r = Freigabezeit, Bereitzeit (release time)
   - d = Zeitschranke, Frist (deadline)
 
-  
+
 * **Task** (Menge "zusammengehörender" Jobs)
   - Speziell: **Jobnetz** oder **periodische Tasks**
 
-  
+
 * **Deadline**
   - hart / weich
-  
-  
+
+
 * **Schedule**
   - zeitliche Zuordnung von Jobs zu Prozessoren
   - gültig: 	Zuordnung verletzt keine der gegeben Bedingungen	(valid)
@@ -537,7 +537,7 @@ nötig.
   - Einplanung: Vorgehen (Algorithmus), das bei gegebener Taskbeschreibung einen Ablaufplan bestimmt
   - Prozessor-Zuordnung: Auswahl eines Jobs durch Scheduler des Systems
 
-  
+
 * **Einplanbarkeit**
   - Taskmenge einplanbar (schedulable, feasible) bei einem Scheduling-
   Algorithmus, wenn der Algorithmus einen ausführbaren Ablaufplan erzeugt
@@ -546,7 +546,7 @@ nötig.
 * **Admission** (Zulassung)
   - Verfahren, das die Einplanbarkeit einer Taskmenge entscheidet
 
-  
+
 * **Optimalität** bzgl. Einplanbarkeit
   - eines Scheduling-Verfahrens in einer Klasse C von Verfahren:
     - erzeugt für jede Tasktmenge T einen ausführbaren Ablaufplan, sofern T
@@ -554,23 +554,23 @@ nötig.
 
 #### Modellannahmen Echtzeit-Scheduling
 
-jede Task T<sub>i</sub> ist persiodische Folge von Jobs mit der Peropde p<sub>i</sub>  
-p<sub>i</sub> ist zugleich Zeitschranke. Die Bearbeitungszeit e<sub>i</sub> ist konstant  
-Prozessor ist entziehbar  
+jede Task T<sub>i</sub> ist persiodische Folge von Jobs mit der Peropde p<sub>i</sub>
+p<sub>i</sub> ist zugleich Zeitschranke. Die Bearbeitungszeit e<sub>i</sub> ist konstant
+Prozessor ist entziehbar
 Task sind von einander unabhängig
 
 #### Verfahren
 
-**RMS** "Rate Monotonic Scheduling"  
+**RMS** "Rate Monotonic Scheduling"
 statische Taskpriorität proportional zu Ankunftsrate
 EDF "Earliest Deadline First"
 
-**Optimalitätseigenschaft**  
-RMS ist optimal in der Klasse aller statischen, EDF in der Klasse aller 
-(dynamischen) Scheduling-Algorithmen (in Einprozessor-Systemen für 
+**Optimalitätseigenschaft**
+RMS ist optimal in der Klasse aller statischen, EDF in der Klasse aller
+(dynamischen) Scheduling-Algorithmen (in Einprozessor-Systemen für
 unabhängige, verdrängbare Tasks)
 
-**Existenz eines Ablaufplans**:	 
+**Existenz eines Ablaufplans**:
 ![Bild](img/admission_krit.png "Admission-Kriterium")
 
 
