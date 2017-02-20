@@ -255,39 +255,39 @@ b) Angenommen auch der Betriebssystemkern kann nicht direkt auf physische Adress
 
 I.
 
-lesen auf 0x000000FF --> Offset = 0FF
-Rest = 0x00000 = 00000000000000000000 (Binär)
-erste 10 Bit = 0, zweite 10 Bit = 0
-PD-Zeile = 0
+lesen auf 0x000000FF --> Offset = 0FF  
+Rest = 0x00000 = 00000000000000000000 (Binär)  
+erste 10 Bit = 0, zweite 10 Bit = 0  
+PD-Zeile = 0  
 --> 0x00000000 --> letzte Ziffer 0 (Hex) = 0000 (Binär) --> kein write-Bit und present-Bit gesetzt --> **PageFault**!
 
 
 II.
 
-schreiben auf 0x00801012 --> Offset = 012
-Rest = 0x00801 = 00000000100000000001
-erste 10 Bit = 0000000010 = **2**, zweite 10 Bit = 0000000001 = **1**
-PD-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> PageTable 0x3000
-PT-Zeile = 1 --> 0x00010001 --> 001 => w-Bit nicht gesetzt, Schreiben nicht möglich --> **PageFault**!
+schreiben auf 0x00801012 --> Offset = 012  
+Rest = 0x00801 = 00000000100000000001  
+erste 10 Bit = 0000000010 = **2**, zweite 10 Bit = 0000000001 = **1**  
+PD-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> PageTable 0x3000  
+PT-Zeile = 1 --> 0x00010001 --> 001 => w-Bit nicht gesetzt, Schreiben nicht möglich --> **PageFault**!  
 
 
 III.
 
-Schreiben auf 0xFFFFF556 --> Offset = 556
-Rest = 0xFFFFF = 11111111111111111111
-erste 10 Bit = 1111111111 = **3FF**, zweite 10 Bit = 1111111111 = **3FF**
-PD-Zeile = 3FF --> 0x00004003 (003 --> w/p gesetzt) --> PageTable 0x4000
-PT-Zeile = 3FF --> 0x00013003 (003 --> w/p gesetzt) --> Schreiben erlaubt --> Ergebnis 0x00013 + Offset
-Ergebnis = **0x13556**
+Schreiben auf 0xFFFFF556 --> Offset = 556  
+Rest = 0xFFFFF = 11111111111111111111  
+erste 10 Bit = 1111111111 = **3FF**, zweite 10 Bit = 1111111111 = **3FF**  
+PD-Zeile = 3FF --> 0x00004003 (003 --> w/p gesetzt) --> PageTable 0x4000  
+PT-Zeile = 3FF --> 0x00013003 (003 --> w/p gesetzt) --> Schreiben erlaubt --> Ergebnis 0x00013 + Offset  
+Ergebnis = **0x13556**  
 
 IV.
 
-Lesen auf 0x00402004 --> Offset = 004
-Rest = 0x 00402 = 00000000010000000010
-erste 10 Bit = 0000000001 = **1**, zweite 10 Bit = 0000000010 = **2**
-PD-Zeile = 1 --> 0x00002003 (003 --> w/p gesetzt) --> PageTable 0x2000 (wieder PageDirectory)
-PT-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> present (lesen geht) --> 0x00003 + Offset
-Ergebnis = **0x00003004**
+Lesen auf 0x00402004 --> Offset = 004  
+Rest = 0x 00402 = 00000000010000000010  
+erste 10 Bit = 0000000001 = **1**, zweite 10 Bit = 0000000010 = **2**  
+PD-Zeile = 1 --> 0x00002003 (003 --> w/p gesetzt) --> PageTable 0x2000 (wieder PageDirectory)  
+PT-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> present (lesen geht) --> 0x00003 + Offset  
+Ergebnis = **0x00003004**  
 
 
 ----------------------------------------
