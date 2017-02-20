@@ -365,6 +365,7 @@ var PR=win['PR']={'createSimpleLexer':createSimpleLexer,'registerLangHandler':re
     }
   }
   var originBase = origin.substr(0, origin.lastIndexOf('/'));
+  originBase = ".";
 
   // Get theme
   var theme = markdownEl.getAttribute('theme') || 'bootstrap';
