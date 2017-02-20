@@ -45,7 +45,11 @@ b)
 
 c)
 
+* C am Ende = 1100 --> 2
+
 d)
+
+* lässt sich sehr schnell entschlüsseln mit euklid. Alg.
 
 -----------------------------------
 
@@ -365,8 +369,9 @@ while (1) {
 		node->lock();
 		if (value < node->value) {
 			if (node->left) {
+				node_old = node;
 				node = node->left;
-				node->unlock();
+				node_old->unlock();
 			} else {
 				node->left = new Node (value);
 				node->unlock();
