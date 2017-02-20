@@ -290,6 +290,10 @@ PT-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> present (lesen geht) --> 0
 Ergebnis = **0x00003004**  
 
 
+b)
+
+0x007FF000 --> um den Eintrag 0x0 in der Tabelle 0x4000 zu ändern (!nicht die Daten, die an der physischen Adresse stehen, auf die der Eintrag zeigt!)
+
 ----------------------------------------
 
 
@@ -357,7 +361,7 @@ root(5) : lock, root(5) : unlock, 7 : lock, 7 : unlock, 9 : lock, 9 : unlock
 Problem:
 5 : lock, 5 : unlock, 3 : lock, 3 : unlock, Interrupt, 3 : lock, 3 : unlock
 
---> könnte entweder 2, dann 1 anhängen, oder erst 1, dann 2 anhängen
+--> könnte entweder 2, dann 1 anhängen, oder erst 1, dann 2 anhängen, oder eine der Zahlen könnte überschrieben werden
 
 
 **c)**
