@@ -4,88 +4,89 @@
   <meta charset="utf-8" />
   <link rel="stylesheet" href="style_nicht.css" />
 </head>
-<title>Klausur Betriebssysteme und Sicherheit, 27.02.2014 </title>
+<title>Klausur Betriebssysteme und Sicherheit, 31.07.2014 </title>
 
 <!-- MARKDOWN ......................... -->
 <xmp theme="simplex" style="display:none;">
 
 
-# Aufgabe 1 – Sicherheit (6 Punkte)
+# Aufgabe 1 – Sicherheit (7 Punkte)
 
-a) Wie kann man auf einem Computer Zufall (Entropie) erzeugen? Nennen Sie zwei Möglichkeiten! 2P
+a) Nennen Sie dir drei Haupt-Schutzziele in der Datensicherheit! 1P
 
-b) Nennen Sie einen prinzipiellen Vorteil von asymmetrischen gegenüber symmetrischen Verschlüsselungsverfahren! 1P
+b) Nennen Sie einen Vorteil von symmetrischen gegenüber asymmetrischen Verschlüsselungsverfahren! 1P
 
-c) Kann der folgende Modul Bestandteil eines sicheren RSA-Schlüssels sein? Begründen Sie! n = 0x2D16E6ADE5C 1P
+c) RSA: öffentlicher Schlüssel = privater Schlüssel --> sicher? Begründung?
 
-d) Einige Endgeräte haben schlechte Entropiequellen. Was bedeutet es für die Sicherheit von RSA, wenn zwei Teilnehmer unbeabsichtigt einen gleichen Faktor wählen? 2P
+d) notwendige Bedingung für informationstheoretische Sicherheit?
+
+e) Warum ist eine zentrale Schlüsselvergabezentrale bei symm. Verschl. unzureichend? Welches Schutzziel unmittelbar verletzt? Verfahren, um sicher symm. Schlüssel auszutauschen?
 
 
 ## Lösung
 
 a)
 
-* Pseudo Random Functions (PRF)
-```
-F: K × X --> Y
-on "domain" X and "range" K, with "efficient" algorithm to evaluate F(k,x)
-```
-
-* Pseudo Random Permutation (PRP)
-```
-Permutation   E: K × X --> X
-has efficient deterministic algorithm to evaluate E(k,x) and
-efficient inversion algorithm D = E^-1
-(A permutation π is a bijective function from a domain to itself: π: X --> X)
-```
+* Confidentiality - Vertraulichkeit
+* Integrity - Integrität
+* Accountability - Zurechenbarkeit
 
 b)
 
-* öffentlicher Schlüssel möglich --> man kann Nachrichten verschicken, ohne vorher Schlüssel austauschen zu müssen
+* schneller
+* kleinere Schlüssel
 
 c)
 
 d)
 
+e)
+
+
 -----------------------------------
 
-# Aufgabe 2 - Unix (5 Punkte)
+# Aufgabe 2 - Echtzeit (6 Punkte)
 
-Ein UNIX-Prozeß führt folgenden Code aus:
+Gegeben ist eine Menge von Jobs J = A,B,C,D mit folgenden Parametern:
 
-```
-int fd1 = open("datei1.txt", O_RDWR | O_CREAT);
-int fd2 = open("datei2.txt", O_RDWR | O_CREAT);
+|   Job i	|  A 	| B  	|  C 	|   D	|
+|---	|---	|---	|---	|---	|
+|   Ausführungszeit e<sub>i</sub>	|   	|   	|   	|   	|
+|   Deadline d<sub>i</sub>	|   	|   	|   	|   	|
 
-int pid1 = fork();
 
-if (pid1 == 0) {
-	write(fd1, "abc", 3);
-	exit(0);
-}
-else
-{
-	int pid2 = fork();
-	if (pid2 == 0)
-	{
-		write(fd2, "abc", 3);
-		exit(0);
-	}
+Jeder Job werde genau einmal ausgefuhrt. Es bestehen keine Abhängigkeiten zwischen den Jobs, alle Jobs sind
+vom Zeitpunkt 0 an bereit und beliebig unterbrechbar.
 
-waitpid(pid1, NULL, 0);
-write(fd1, "def", 3);
-write(fd2, "def", 3);
-}
-```
 
-Die Dateien *datei1.txt* und *datei2.txt* existieren vor Programmausführung nicht, sondern werden durch das Öffnen angelegt. Alle Systemaufrufe laufen korrekt zu Ende, d.h. es treten keine Laufzeitfehler auf. Prozesse können zu einem beliebigen Zeitpunkt (auch während der Ausführung eines Systemaufrufs) unterbrochen werden. Welchen Inhalt können die Dateien *datei1.txt* und *datei2.txt* nach erfolgreicher Ausführung des Programms haben?
+a) Ist die gegebene Menge von Jobs mit EDF auf einem Prozessor einplanbar? 1 P
+
+
+b) Wir mochten die kürzeste mögliche Gesamtbearbeitungszeit der Job-Menge J erreichen. Dabei können beliebig
+viele Prozessoren eingesetzt werden. Wie lang ist diese kurzeste Gesamtbearbeitungszeit? Begründen Sie,
+warum keine weitere Verkurzung möglich ist.  1 P
+
+
+c) Geben Sie die kleinste Anzahl an Prozessoren an, mit der diese Gesamtbearbeitungszeit erreicht wird. Geben
+Sie einen möglichen dabei entstehenden Ablaufplan der Jobs J an.  2 P
+
+
+d) Wie ist die durchschnittliche Verweilzeit aller Jobs in Ihrem bei c) gefundenen Ablaufplan? 1 P
+
+
+e) Gibt es unter Berucksichtigung der in c) zu Gesamtbearbeitungszeit und Prozessorzahl genannten Bedingungen
+auch einplanbare Ablaufplane mit anderer durchschnittlicher Job-Verweilzeit? Begr ünden Sie Ihre Antwort!  1 P
+
+
 
 
 ## Lösung
 
-fd1: abc def def
+a)
 
-fd2: abc def def, def abc def
+&eta; = 1/2 + 4/8 + 3/6 + 2/10
+
+&eta; = 1.7 > 1 --> nicht mit EDF einplanbar
 
 ------------------------------
 
