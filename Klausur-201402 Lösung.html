@@ -39,17 +39,24 @@ efficient inversion algorithm D = E^-1
 (A permutation π is a bijective function from a domain to itself: π: X --> X)
 ```
 
+--> erzeugen keinen echten Zufall!
+
+echt:
+
+* Rauschen von Mikrofon, Patterns von Lavalampen, Tastatureingaben eines Nutzers
+
+
 b)
 
 * öffentlicher Schlüssel möglich --> man kann Nachrichten verschicken, ohne vorher Schlüssel austauschen zu müssen
 
 c)
 
-* C am Ende = 1100 --> 2
+* C am Ende = 1100 --> 2, Schlüssel mit gerader Zahl ungünstig
 
 d)
 
-* lässt sich sehr schnell entschlüsseln mit euklid. Alg.
+* lässt sich sehr schnell entschlüsseln mit euklid. Alg., weil ggT nicht mehr 1
 
 -----------------------------------
 
@@ -115,7 +122,8 @@ Hinweis: Migration bezeichnet den Vorgang der Neu-Zuteilung von Tasks zu Prozess
 
 c) Wieviele der sparsamen Prozessoren sind minimal nötig, um die Taskmenge unter diesen Bedingungen einzuplanen? Belegen Sie Ihre Antwort! 2P
 
-d) Ändert sich diese minimale Prozessoranzahl, wenn Jobs während ihrer Laufzeit zwischen Prozessoren migrieren können? Der Migrations-Overhead werde vernachlässigt. Begründen Sie Ihre Antwort durch einen geeigneten Ablaufplan. 2P
+d) Ändert sich diese minimale Prozessoranzahl, wenn Jobs während ihrer Laufzeit zwischen Prozessoren migrieren können? 
+Der Migrations-Overhead werde vernachlässigt. Begründen Sie Ihre Antwort durch einen geeigneten Ablaufplan. 2P
 
 ![Bild](img/realtime_empty.png "Aufgabe 3-2")
 
@@ -172,8 +180,11 @@ Hier:
 
 c)
 
+3 Prozessoren
+
 d)
 
+2 Prozessoren
 
 -------------
 
