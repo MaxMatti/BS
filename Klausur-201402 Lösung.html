@@ -39,13 +39,24 @@ efficient inversion algorithm D = E^-1
 (A permutation π is a bijective function from a domain to itself: π: X --> X)
 ```
 
+--> erzeugen keinen echten Zufall!
+
+echt:
+
+* Rauschen von Mikrofon, Patterns von Lavalampen, Tastatureingaben eines Nutzers
+
+
 b)
 
 * öffentlicher Schlüssel möglich --> man kann Nachrichten verschicken, ohne vorher Schlüssel austauschen zu müssen
 
 c)
 
+* C am Ende = 1100 --> 2, Schlüssel mit gerader Zahl ungünstig
+
 d)
+
+* lässt sich sehr schnell entschlüsseln mit euklid. Alg., weil ggT nicht mehr 1
 
 -----------------------------------
 
@@ -91,7 +102,7 @@ fd2: abc def def, def abc def
 
 # Aufgabe 3 – Echtzeit (8 Punkte)
 
-In einem Echtzeitsystem isteine Menge von drei periodischen Tasks so einzuplanen, dass deren Jobs in jeder Periode erfolgreich beendet werden. Das Periodenende entspricht der Deadline. Die Parameter der Tasks beschreiben jeweils die Periode p und die konstante Bearbeitungszeit e der Jobs:
+In einem Echtzeitsystem ist eine Menge von drei periodischen Tasks so einzuplanen, dass deren Jobs in jeder Periode erfolgreich beendet werden. Das Periodenende entspricht der Deadline. Die Parameter der Tasks beschreiben jeweils die Periode p und die konstante Bearbeitungszeit e der Jobs:
 
 T1 | T2 | T3
 --- | --- | ---
@@ -111,7 +122,8 @@ Hinweis: Migration bezeichnet den Vorgang der Neu-Zuteilung von Tasks zu Prozess
 
 c) Wieviele der sparsamen Prozessoren sind minimal nötig, um die Taskmenge unter diesen Bedingungen einzuplanen? Belegen Sie Ihre Antwort! 2P
 
-d) Ändert sich diese minimale Prozessoranzahl, wenn Jobs während ihrer Laufzeit zwischen Prozessoren migrieren können? Der Migrations-Overhead werde vernachlässigt. Begründen Sie Ihre Antwort durch einen geeigneten Ablaufplan. 2P
+d) Ändert sich diese minimale Prozessoranzahl, wenn Jobs während ihrer Laufzeit zwischen Prozessoren migrieren können? 
+Der Migrations-Overhead werde vernachlässigt. Begründen Sie Ihre Antwort durch einen geeigneten Ablaufplan. 2P
 
 ![Bild](img/realtime_empty.png "Aufgabe 3-2")
 
@@ -168,8 +180,11 @@ Hier:
 
 c)
 
+3 Prozessoren
+
 d)
 
+2 Prozessoren
 
 -------------
 
@@ -251,40 +266,44 @@ b) Angenommen auch der Betriebssystemkern kann nicht direkt auf physische Adress
 
 I.
 
-lesen auf 0x000000FF --> Offset = 0FF
-Rest = 0x00000 = 00000000000000000000 (Binär)
-erste 10 Bit = 0, zweite 10 Bit = 0
-PD-Zeile = 0
+lesen auf 0x000000FF --> Offset = 0FF  
+Rest = 0x00000 = 00000000000000000000 (Binär)  
+erste 10 Bit = 0, zweite 10 Bit = 0  
+PD-Zeile = 0  
 --> 0x00000000 --> letzte Ziffer 0 (Hex) = 0000 (Binär) --> kein write-Bit und present-Bit gesetzt --> **PageFault**!
 
 
 II.
 
-schreiben auf 0x00801012 --> Offset = 012
-Rest = 0x00801 = 00000000100000000001
-erste 10 Bit = 0000000010 = **2**, zweite 10 Bit = 0000000001 = **1**
-PD-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> PageTable 0x3000
-PT-Zeile = 1 --> 0x00010001 --> 001 => w-Bit nicht gesetzt, Schreiben nicht möglich --> **PageFault**!
+schreiben auf 0x00801012 --> Offset = 012  
+Rest = 0x00801 = 00000000100000000001  
+erste 10 Bit = 0000000010 = **2**, zweite 10 Bit = 0000000001 = **1**  
+PD-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> PageTable 0x3000  
+PT-Zeile = 1 --> 0x00010001 --> 001 => w-Bit nicht gesetzt, Schreiben nicht möglich --> **PageFault**!  
 
 
 III.
 
-Schreiben auf 0xFFFFF556 --> Offset = 556
-Rest = 0xFFFFF = 11111111111111111111
-erste 10 Bit = 1111111111 = **3FF**, zweite 10 Bit = 1111111111 = **3FF**
-PD-Zeile = 3FF --> 0x00004003 (003 --> w/p gesetzt) --> PageTable 0x4000
-PT-Zeile = 3FF --> 0x00013003 (003 --> w/p gesetzt) --> Schreiben erlaubt --> Ergebnis 0x00013 + Offset
-Ergebnis = **0x13556**
+Schreiben auf 0xFFFFF556 --> Offset = 556  
+Rest = 0xFFFFF = 11111111111111111111  
+erste 10 Bit = 1111111111 = **3FF**, zweite 10 Bit = 1111111111 = **3FF**  
+PD-Zeile = 3FF --> 0x00004003 (003 --> w/p gesetzt) --> PageTable 0x4000  
+PT-Zeile = 3FF --> 0x00013003 (003 --> w/p gesetzt) --> Schreiben erlaubt --> Ergebnis 0x00013 + Offset  
+Ergebnis = **0x13556**  
 
 IV.
 
-Lesen auf 0x00402004 --> Offset = 004
-Rest = 0x 00402 = 00000000010000000010
-erste 10 Bit = 0000000001 = **1**, zweite 10 Bit = 0000000010 = **2**
-PD-Zeile = 1 --> 0x00002003 (003 --> w/p gesetzt) --> PageTable 0x2000 (wieder PageDirectory)
-PT-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> present (lesen geht) --> 0x00003 + Offset
-Ergebnis = **0x00003004**
+Lesen auf 0x00402004 --> Offset = 004  
+Rest = 0x 00402 = 00000000010000000010  
+erste 10 Bit = 0000000001 = **1**, zweite 10 Bit = 0000000010 = **2**  
+PD-Zeile = 1 --> 0x00002003 (003 --> w/p gesetzt) --> PageTable 0x2000 (wieder PageDirectory)  
+PT-Zeile = 2 --> 0x00003003 (003 --> w/p gesetzt) --> present (lesen geht) --> 0x00003 + Offset  
+Ergebnis = **0x00003004**  
 
+
+b)
+
+0x007FF000 --> um den Eintrag 0x0 in der Tabelle 0x4000 zu ändern (!nicht die Daten, die an der physischen Adresse stehen, auf die der Eintrag zeigt!)
 
 ----------------------------------------
 
@@ -353,7 +372,7 @@ root(5) : lock, root(5) : unlock, 7 : lock, 7 : unlock, 9 : lock, 9 : unlock
 Problem:
 5 : lock, 5 : unlock, 3 : lock, 3 : unlock, Interrupt, 3 : lock, 3 : unlock
 
---> könnte entweder 2, dann 1 anhängen, oder erst 1, dann 2 anhängen
+--> könnte entweder 2, dann 1 anhängen, oder erst 1, dann 2 anhängen, oder eine der Zahlen könnte überschrieben werden
 
 
 **c)**
@@ -365,8 +384,9 @@ while (1) {
 		node->lock();
 		if (value < node->value) {
 			if (node->left) {
+				node_old = node;
 				node = node->left;
-				node->unlock();
+				node_old->unlock();
 			} else {
 				node->left = new Node (value);
 				node->unlock();
@@ -431,7 +451,7 @@ abstürzt. Sind nach dem Neustart des Systems noch Korrekturen erforderlich und 
 
 **a)**
 
-4, 3, 5, 6
+0, 3, 4, 3, 5, 6
 
 **b)**
 

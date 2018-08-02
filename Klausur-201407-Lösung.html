@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="style_nicht.css" />
+</head>
+<title>Klausur Betriebssysteme und Sicherheit, 31.07.2014 </title>
+
+<!-- MARKDOWN ......................... -->
+<xmp theme="simplex" style="display:none;">
+
+
+# Aufgabe 1 – Sicherheit (7 Punkte)
+
+a) Nennen Sie die drei Haupt-Schutzziele in der Datensicherheit! 1P
+
+b) Nennen Sie einen Vorteil von symmetrischen gegenüber asymmetrischen Verschlüsselungsverfahren! 1P
+
+c) RSA: öffentlicher Schlüssel = privater Schlüssel --> sicher? Begründung?
+
+d) notwendige Bedingung für informationstheoretische Sicherheit?
+
+e) Warum ist eine zentrale Schlüsselvergabezentrale bei symm. Verschl. unzureichend? Welches Schutzziel unmittelbar verletzt? Verfahren, um sicher symm. Schlüssel auszutauschen?
+
+
+## Lösung
+
+a)
+
+* Confidentiality - Vertraulichkeit
+* Integrity - Integrität
+* Availability - Verfügbarkeit
+
+b)
+
+* schneller
+* kleinere Schlüssel
+
+c)
+
+d)
+
+e)
+
+
+
+-----------------------------------
+
+# Aufgabe 2 - Echtzeit (6 Punkte)
+
+Gegeben ist eine Menge von Jobs J = A,B,C,D mit folgenden Parametern:
+
+|   Job i	|  A 	| B  	|  C 	|   D	|
+|---	|---	|---	|---	|---	|
+|   Ausführungszeit e<sub>i</sub>	|   1	|   4	|   3	|   2	|
+|   Deadline d<sub>i</sub>	|  2 	|   8	|  6	|   10	|
+
+
+Jeder Job werde genau einmal ausgefuhrt. Es bestehen keine Abhängigkeiten zwischen den Jobs, alle Jobs sind
+vom Zeitpunkt 0 an bereit und beliebig unterbrechbar.
+
+
+a) Ist die gegebene Menge von Jobs mit EDF auf einem Prozessor einplanbar? 1 P
+
+
+b) Wir möchten die kürzeste mögliche Gesamtbearbeitungszeit der Job-Menge J erreichen. Dabei können beliebig
+viele Prozessoren eingesetzt werden. Wie lang ist diese kürzeste Gesamtbearbeitungszeit? Begründen Sie,
+warum keine weitere Verkürzung möglich ist.  1 P
+
+
+c) Geben Sie die kleinste Anzahl an Prozessoren an, mit der diese Gesamtbearbeitungszeit erreicht wird. Geben
+Sie einen möglichen dabei entstehenden Ablaufplan der Jobs J an.  2 P
+
+
+d) Wie ist die durchschnittliche Verweilzeit aller Jobs in Ihrem bei c) gefundenen Ablaufplan? 1 P
+
+
+e) Gibt es unter Berücksichtigung der in c) zu Gesamtbearbeitungszeit und Prozessorzahl genannten Bedingungen
+auch einplanbare Ablaufpläne mit anderer durchschnittlicher Job-Verweilzeit? Begründen Sie Ihre Antwort!  1 P
+
+
+
+
+## Lösung
+
+a)
+
+&eta; = 1/2 + 4/8 + 3/6 + 2/10
+
+&eta; = 1.7 > 1 --> nicht mit EDF einplanbar
+
+b)
+
+* kürzeste Gesamtbearbeitungszeit = längste einzelne Bearbeitungszeit = 4
+* kann nicht kürzer werden, da man Jobs zwar teilen kann, aber nicht parallel mit sich selbst ablaufen lassen kann
+
+c)
+
+* kleinste Anzahl Prozessoren: 3
+
+|  |  |  |  |  |
+| --- | --- | --- | --- | --- |
+| 1 | B | B | B | B |
+| 2 | C | C | C |   |
+| 3 | A | D | D |   |
+
+
+d) 
+
+* durchschnittliche Wartezeit t&#772;<sub>w</sub>
+* durchschnittliche Bearbeitungszeit t&#772;<sub>b</sub>
+* **durchschnittliche Verweilzeit**: t&#772;<sub>v</sub> = t&#772;<sub>w</sub> + t&#772;<sub>b</sub>
+
+
+* hier: 
+  - t&#772;<sub>w</sub> = 0.25
+  - t&#772;<sub>b</sub> = (1 + 2 + 3 + 4) / 4 = 2.5 
+  - **t&#772;<sub>v</sub> = 2.75**
+
+
+e) 
+
+|  |  |  |  |  |
+| --- | --- | --- | --- | --- |
+| 1 | B | B | B | B |
+| 2 | C | C | C |   |
+| 3 | D | D | A |   |
+
+* hätte t&#772;<sub>w</sub> = 0.5
+* daher t&#772;<sub>v</sub> = 3 möglich, bei gleicher Gesamtbearbeitungszeit
+
+
+------------------------------
+
+# Aufgabe 3 – Echtzeit (8 Punkte)
+
+
+## Lösung
+
+a)
+
+b)
+
+c)
+
+d)
+
+
+-------------
+
+
+# Aufgabe 4 – Speicherverwaltung (3 Punkte)
+
+## Lösung
+
+---------------
+
+# Aufgabe 5 – Speicherverwaltung (6 Punkte)
+
+
+
+## Lösung
+
+**a)**
+
+
+
+
+----------------------------------------
+
+
+# Aufgabe 6 – Synchronisation (6 Punkte)
+
+
+
+## Lösung
+
+
+
+----------------------------------------------
+
+
+
+# Aufgabe 7 – Dateisystem (8 Punkte)
+
+
+
+## Lösung
+
+
+
+
+
+
+
+
+
+
+
+
+
+</xmp>
+<!-- MARKDOWN ......................... -->
+
+<script src="strapdown.js"></script>
+</html>
